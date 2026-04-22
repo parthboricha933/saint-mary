@@ -337,34 +337,32 @@
                     body: JSON.stringify({ email: email, password: password })
                 }, 15000)
                 .then(function (response) {
+                    setLoading(false);
                     if (response.ok) {
                         showSuccess('Login successful! Redirecting to dashboard...');
-                        // Small delay to show success message
                         setTimeout(function () {
                             window.location.href = '/dashboard';
                         }, 500);
                     } else {
                         // Try to parse error from response
                         return response.text().then(function (text) {
+                            var data;
                             try {
-                                var data = JSON.parse(text);
-                                throw new Error(data.error || data.message || 'Login failed');
-                            } catch (parseErr) {
-                                if (parseErr.message && parseErr.message !== 'Login failed') {
-                                    throw parseErr;
-                                }
+                                data = JSON.parse(text);
+                            } catch (e) {
                                 throw new Error('Invalid email or password. Please try again.');
                             }
+                            throw new Error(data.error || data.message || 'Invalid email or password. Please try again.');
                         });
                     }
                 })
                 .catch(function (err) {
+                    setLoading(false);
                     var msg = err.message || 'An unexpected error occurred. Please try again.';
                     if (msg.indexOf('Failed to fetch') !== -1 || msg.indexOf('NetworkError') !== -1) {
                         msg = 'Network error. Please check your connection and try again.';
                     }
                     showError(msg);
-                    setLoading(false);
                 });
             });
 

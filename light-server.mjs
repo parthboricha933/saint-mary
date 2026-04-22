@@ -154,12 +154,27 @@ apiRoutes['POST /api/auth/user-login'] = async (req, res) => {
     const p = await getPrisma();
     const hash = crypto.createHash('sha256').update(password).digest('hex');
     const user = await p.user.findUnique({ where: { email } });
-    if (!user || user.password !== hash) return json(res, { error: 'Invalid credentials' }, 401);
-    if (user.status === 'pending') return json(res, { error: 'Your account is pending approval' }, 403);
-    if (user.status === 'rejected') return json(res, { error: 'Your account has been rejected' }, 403);
+    if (!user) {
+      console.log('[AUTH] Login failed - user not found:', email);
+      return json(res, { error: 'Invalid email or password' }, 401);
+    }
+    if (user.password !== hash) {
+      console.log('[AUTH] Login failed - password mismatch for:', email);
+      return json(res, { error: 'Invalid email or password' }, 401);
+    }
+    if (user.status === 'pending') {
+      console.log('[AUTH] Login blocked - account pending:', email);
+      return json(res, { error: 'Your account is pending approval by the principal. Please contact the school admin.' }, 403);
+    }
+    if (user.status === 'rejected') {
+      console.log('[AUTH] Login blocked - account rejected:', email);
+      return json(res, { error: 'Your account has been rejected. Please contact the school admin.' }, 403);
+    }
+    console.log('[AUTH] Login success:', email, 'role:', user.role);
     res.setHeader('Set-Cookie', setPageCookies(res, 'user_token', user.id));
     json(res, { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, subject: user.subject, status: user.status } });
   } catch (e) {
+    console.error('[AUTH] Login server error:', e);
     json(res, { error: 'Server error' }, 500);
   }
 };
