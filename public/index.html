@@ -2254,7 +2254,7 @@
             .then(function(res) { return res.json(); })
             .then(function(data) {
                 feesLoaded = true;
-                var fees = Array.isArray(data) ? data : (data.feeStructure || data.data || []);
+                var fees = Array.isArray(data) ? data : (data.fees || data.feeStructure || data.data || []);
 
                 if (fees.length === 0) {
                     container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128176;</div><h3>Fee Structure Coming Soon</h3><p>Fee details for the 2025-26 session will be available shortly. Please contact the school office for information.</p></div>';
@@ -2267,14 +2267,20 @@
                 html += '</tr></thead><tbody>';
 
                 fees.forEach(function(fee) {
-                    var total = (Number(fee.tuitionFee) || 0) + (Number(fee.examFee) || 0) + (Number(fee.labFee) || 0) + (Number(fee.sportsFee) || 0) + (Number(fee.transportFee) || 0);
+                    var cls = fee.classRange || fee.className || fee.class || '';
+                    var tuition = Number(fee.tuitionFee) || 0;
+                    var exam = Number(fee.examFee) || 0;
+                    var lab = Number(fee.labFee) || 0;
+                    var sports = Number(fee.sportsFee) || 0;
+                    var transport = Number(fee.transportFee) || 0;
+                    var total = tuition + exam + lab + sports + transport;
                     html += '<tr>';
-                    html += '<td><strong>' + escapeHtml(fee.className || fee.class || '') + '</strong></td>';
-                    html += '<td>&#8377; ' + (Number(fee.tuitionFee) || 0).toLocaleString('en-IN') + '</td>';
-                    html += '<td>&#8377; ' + (Number(fee.examFee) || 0).toLocaleString('en-IN') + '</td>';
-                    html += '<td>&#8377; ' + (Number(fee.labFee) || 0).toLocaleString('en-IN') + '</td>';
-                    html += '<td>&#8377; ' + (Number(fee.sportsFee) || 0).toLocaleString('en-IN') + '</td>';
-                    html += '<td>&#8377; ' + (Number(fee.transportFee) || 0).toLocaleString('en-IN') + '</td>';
+                    html += '<td><strong>' + escapeHtml(cls) + '</strong></td>';
+                    html += '<td>&#8377; ' + tuition.toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + exam.toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + lab.toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + sports.toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + transport.toLocaleString('en-IN') + '</td>';
                     html += '<td><strong>&#8377; ' + total.toLocaleString('en-IN') + '</strong></td>';
                     html += '</tr>';
                 });
