@@ -13,3 +13,8 @@ PID: 6865
 Received SIGTERM, shutting down gracefully...
 Server running on http://localhost:3000
 PID: 7235
+[AUTH] Login failed - password mismatch for: parthboricha933@gmail.com
+[AUTH] Login failed - password mismatch for: parthboricha933@gmail.com
+[AUTH] Login failed - password mismatch for: a@gmail.com
+[AUTH] Login success: a@gmail.com role: principal
+[AUTH] Login success: a@gmail.com role: principal
