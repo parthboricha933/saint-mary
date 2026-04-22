@@ -1,6 +1,6 @@
 # Saint Mary School - School Management Website
 
-> A complete school management website for **Saint Mary School, Rajula, Amreli, Gujarat** (UDISE: 24131005639). Built with a lightweight Node.js server, Prisma ORM with SQLite, and pure static HTML/CSS/JS.
+> A complete school management website for **Saint Mary School, Rajula, Amreli, Gujarat** (UDISE: 24131005639). Deployable on Vercel with PostgreSQL, or run locally with Node.js + SQLite/PostgreSQL. Pure static HTML/CSS/JS frontend with serverless API backend.
 
 ---
 
@@ -45,11 +45,11 @@
 
 | Layer | Technology |
 |-------|-----------|
-| Server | Node.js (built-in `http` module, no framework) |
-| Database | SQLite via Prisma ORM |
+| Server | Node.js (built-in `http` module) / Vercel Serverless |
+| Database | PostgreSQL (Vercel) or SQLite (local) via Prisma ORM |
 | Frontend | Static HTML + CSS + Vanilla JavaScript |
 | Auth | Cookie-based (SHA-256 hashed tokens) |
-| Reverse Proxy | Caddy |
+| Deployment | Vercel / Caddy reverse proxy |
 
 ---
 
@@ -57,19 +57,23 @@
 
 ```
 saint-mary/
-├── light-server.mjs            # Main HTTP server (all API routes + static files)
+├── light-server.mjs            # Local dev server (all API routes + static files)
+├── vercel.json                  # Vercel deployment config
+├── api/
+│   └── [...path].js             # Catch-all serverless API handler (Vercel)
 ├── package.json                # Dependencies & scripts
-├── Caddyfile                   # Caddy reverse proxy config (port 81 → 3000)
-├── auth-config.json            # Admin credentials configuration
-├── .env                        # Environment variables (DATABASE_URL)
+├── Caddyfile                   # Caddy reverse proxy config (optional)
+├── auth-config.json            # Admin credentials (local dev)
+├── .env.example                # Environment variable template
 ├── .gitignore
-├── start-server.sh             # Server auto-restart wrapper
+├── start-server.sh             # Server auto-restart wrapper (local)
 │
 ├── prisma/
-│   └── schema.prisma           # Database schema (9 models)
+│   ├── schema.prisma           # PostgreSQL schema (Vercel)
+│   └── schema.sqlite.prisma    # SQLite schema (local dev)
 │
 ├── db/
-│   └── custom.db               # SQLite database (auto-generated)
+│   └── custom.db               # SQLite database (local dev only)
 │
 └── public/                     # Static web assets
     ├── index.html              # Main public website
@@ -106,11 +110,62 @@ saint-mary/
 
 ---
 
-## Setup & Installation
+## Deployment on Vercel (Recommended)
+
+### Prerequisites
+- A [Vercel](https://vercel.com) account
+- [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) (free tier available)
+- GitHub account
+
+### Steps
+
+1. **Fork or push this repo to GitHub**
+
+2. **Import to Vercel**
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Import the `saint-mary` repository
+   - Framework Preset: **Other**
+   - Click **Deploy**
+
+3. **Add Vercel Postgres**
+   - In your Vercel project, go to **Storage** tab
+   - Click **Create Database** and select **Postgres**
+   - Choose the free (Hobby) plan
+   - Once created, Vercel automatically sets `DATABASE_URL` and `DIRECT_DATABASE_URL` environment variables
+
+4. **Set environment variables**
+   - Go to **Settings > Environment Variables**
+   - Add:
+     - `ADMIN_EMAIL` = your admin email (e.g. `admin@saintmaryschool.com`)
+     - `ADMIN_TOKEN_HASH` = SHA-256 hash of your admin token
+   - `DATABASE_URL` and `DIRECT_DATABASE_URL` are already set by Vercel Postgres
+
+5. **Push database schema**
+   - Locally, set the Vercel Postgres connection string:
+     ```bash
+     # Copy the DATABASE_URL from Vercel dashboard
+     npx prisma db push
+     ```
+   - This creates all 9 tables in the remote Postgres database
+
+6. **Redeploy** — Vercel will auto-rebuild with the new environment variables
+
+### Generate Admin Token Hash
+
+```bash
+node -e "console.log(require('crypto').createHash('sha256').update('your-admin-email:your-token').digest('hex'))"
+```
+
+Replace `your-admin-email` and `your-token` with your chosen admin credentials.
+
+---
+
+## Local Development
 
 ### Prerequisites
 - Node.js v18+
 - npm
+- SQLite (comes with Node.js, no extra install needed)
 
 ### Steps
 
@@ -122,18 +177,23 @@ cd saint-mary
 # 2. Install dependencies
 npm install
 
-# 3. Set up environment
-cp .env.example .env
-# Edit .env and set DATABASE_URL=file:../db/custom.db
+# 3. Switch to SQLite schema (for local dev)
+cp prisma/schema.sqlite.prisma prisma/schema.prisma
 
-# 4. Initialize the database
+# 4. Set up environment
+cp .env.example .env
+# Edit .env:
+#   DATABASE_URL="file:./db/custom.db"
+
+# 5. Initialize the database
+mkdir -p db
 npx prisma db push
 npx prisma generate
 
-# 5. Configure admin credentials
-# Edit auth-config.json with your admin email and token hash
+# 6. Seed data (optional)
+npx prisma db seed
 
-# 6. Start the server
+# 7. Start the server
 npm start
 # Server runs on http://localhost:3000
 ```
@@ -141,7 +201,7 @@ npm start
 ### NPM Scripts
 
 ```bash
-npm start              # Start the server (768MB memory limit)
+npm start              # Start the local server (768MB memory limit)
 npm run db:push        # Push schema changes to database
 npm run db:generate    # Regenerate Prisma client
 npm run db:studio      # Open Prisma Studio (database GUI)
@@ -231,7 +291,11 @@ npm run db:studio      # Open Prisma Studio (database GUI)
 
 ## Deployment
 
-The project is configured to run behind **Caddy** as a reverse proxy:
+### Vercel (Recommended)
+
+See the [Deployment on Vercel](#deployment-on-vercel-recommended) section above for step-by-step instructions.
+
+### VPS / Dedicated Server (with Caddy)
 
 ```caddyfile
 :81 {
@@ -239,12 +303,13 @@ The project is configured to run behind **Caddy** as a reverse proxy:
 }
 ```
 
-To deploy:
+To deploy on a VPS:
 1. Copy the project to your server
 2. Install Node.js dependencies (`npm install`)
-3. Set up the database (`npx prisma db push`)
-4. Configure Caddy to proxy to the Node.js server
-5. Start the server with `npm start` or `./start-server.sh`
+3. Set up PostgreSQL and configure `DATABASE_URL` in `.env`
+4. Initialize the database (`npx prisma db push`)
+5. Configure Caddy to proxy to the Node.js server
+6. Start the server with `npm start` or `./start-server.sh`
 
 ---
 
