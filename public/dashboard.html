@@ -758,6 +758,50 @@
         font-size: 0.8rem;
       }
     }
+
+    /* Management tabs */
+    .mgmt-form { background:#fff; border-radius:12px; padding:24px; border:1px solid #e5e7eb; margin-bottom:24px; display:none; box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+    .mgmt-form.show { display:block; }
+    .mgmt-form h3 { font-size:1rem; font-weight:700; color:#111827; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #f3f4f6; }
+    .mgmt-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .mgmt-form-grid .full-width { grid-column:1/-1; }
+    .mgmt-form-grid .form-group { margin-bottom:0; }
+    .mgmt-form-grid label { display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:6px; }
+    .mgmt-form-grid input, .mgmt-form-grid select, .mgmt-form-grid textarea { width:100%; padding:9px 12px; border:1.5px solid #d1d5db; border-radius:8px; font-size:0.9rem; font-family:inherit; color:#1f2937; background:#fff; }
+    .mgmt-form-grid input:focus, .mgmt-form-grid select:focus, .mgmt-form-grid textarea:focus { outline:none; border-color:#059669; box-shadow:0 0 0 3px rgba(5,150,105,0.15); }
+    .mgmt-form-grid textarea { min-height:80px; resize:vertical; }
+
+    .btn-action-green { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#059669; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:background 0.15s; font-family:inherit; }
+    .btn-action-green:hover { background:#047857; }
+    .btn-action-outline { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#fff; color:#374151; border:1.5px solid #d1d5db; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:background 0.15s; font-family:inherit; }
+    .btn-action-outline:hover { background:#f3f4f6; }
+    .btn-action-red { display:inline-flex; align-items:center; gap:4px; padding:6px 12px; background:#dc2626; color:#fff; border:none; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit; }
+
+    .gallery-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
+    .gallery-card { background:#fff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb; position:relative; }
+    .gallery-card img { width:100%; height:160px; object-fit:cover; display:block; }
+    .gallery-card-info { padding:10px; }
+    .gallery-card .gallery-cat { display:inline-block; padding:2px 8px; border-radius:6px; font-size:0.7rem; font-weight:600; background:#ecfdf5; color:#065f46; }
+    .gallery-card .gallery-del { position:absolute; top:8px; right:8px; background:rgba(220,38,38,0.9); color:#fff; border:none; border-radius:50%; width:28px; height:28px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
+    .gallery-card:hover .gallery-del { opacity:1; }
+
+    .upload-zone { border:2px dashed #d1d5db; border-radius:12px; padding:28px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:12px; color:#9ca3af; }
+    .upload-zone:hover { border-color:#059669; background:#f0fdf4; }
+    .upload-zone.has-image { padding:12px; color:#374151; }
+    .upload-zone img { max-height:180px; border-radius:8px; }
+
+    .notice-card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:12px; border-left:4px solid #9ca3af; }
+    .notice-card.academic { border-left-color:#3b82f6; }
+    .notice-card.events { border-left-color:#8b5cf6; }
+    .notice-card .notice-title { font-size:0.95rem; font-weight:600; color:#111827; margin-bottom:6px; }
+    .notice-card .notice-body { font-size:0.85rem; color:#4b5563; line-height:1.5; margin-bottom:8px; }
+    .notice-card .notice-actions { display:flex; gap:6px; }
+
+    @media (max-width:767px) {
+      .mgmt-form-grid { grid-template-columns:1fr; }
+      .mgmt-form-grid .full-width { grid-column:1; }
+      .gallery-grid { grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); }
+    }
   </style>
 </head>
 <body>
@@ -807,6 +851,18 @@
         </button>
         <button data-tab="teachers" id="teachersTabBtn" style="display:none;">
           <span class="tab-icon">&#128101;</span> Manage Teachers
+        </button>
+        <button data-tab="mgmt-gallery" id="mgmtGalleryTab" style="display:none;">
+            <span class="tab-icon">&#128247;</span> Gallery
+        </button>
+        <button data-tab="mgmt-notices" id="mgmtNoticesTab" style="display:none;">
+            <span class="tab-icon">&#128227;</span> Notices
+        </button>
+        <button data-tab="mgmt-syllabus" id="mgmtSyllabusTab" style="display:none;">
+            <span class="tab-icon">&#128218;</span> Syllabus
+        </button>
+        <button data-tab="mgmt-fees" id="mgmtFeesTab" style="display:none;">
+            <span class="tab-icon">&#128176;</span> Fees
         </button>
       </nav>
     </aside>
@@ -893,6 +949,113 @@
               <p>Loading users...</p>
             </div>
           </div>
+        </div>
+
+        <!-- Gallery Management Panel -->
+        <div class="tab-panel" id="panel-mgmt-gallery">
+            <div class="tab-header">
+                <h2>Gallery Management</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-action-green" id="toggleGalleryFormBtn" onclick="window._dash.toggleGalleryForm()">+ Upload Image</button>
+                    <button class="btn-refresh" id="refreshGallery"><span class="refresh-icon">&#8635;</span> Refresh</button>
+                </div>
+            </div>
+            <div class="mgmt-form" id="galleryForm">
+                <h3>Upload Image</h3>
+                <div class="upload-zone" id="galleryUploadZone" onclick="document.getElementById('galleryFileInput').click()">
+                    <div style="font-size:32px;margin-bottom:8px;">&#128247;</div>
+                    <p>Click or drag an image to upload</p>
+                </div>
+                <input type="file" id="galleryFileInput" accept="image/*" style="display:none" onchange="window._dash.handleGalleryFile(this.files[0])">
+                <div class="mgmt-form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+                    <div class="form-group"><label>Title</label><input type="text" id="galleryTitle" placeholder="Image title"></div>
+                    <div class="form-group"><label>Category</label><select id="galleryCategory"><option value="general">General</option><option value="campus">Campus</option><option value="activities">Activities</option><option value="events">Events</option><option value="classroom">Classroom</option></select></div>
+                </div>
+                <div style="margin-top:16px;display:flex;gap:12px;">
+                    <button class="btn-action-green" onclick="window._dash.uploadGalleryImage()">Upload</button>
+                    <button class="btn-action-outline" onclick="window._dash.toggleGalleryForm()">Cancel</button>
+                </div>
+            </div>
+            <div id="galleryGrid" class="gallery-grid"></div>
+        </div>
+
+        <!-- Notices Management Panel -->
+        <div class="tab-panel" id="panel-mgmt-notices">
+            <div class="tab-header">
+                <h2>Notice Board</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-action-green" onclick="window._dash.toggleNoticeForm()">+ Add Notice</button>
+                    <button class="btn-refresh" id="refreshNotices"><span class="refresh-icon">&#8635;</span> Refresh</button>
+                </div>
+            </div>
+            <div class="mgmt-form" id="noticeForm">
+                <h3 id="noticeFormTitle">Add New Notice</h3>
+                <div class="mgmt-form-grid">
+                    <div class="form-group"><label>Title</label><input type="text" id="noticeTitle" placeholder="Notice title"></div>
+                    <div class="form-group"><label>Category</label><select id="noticeCategory"><option value="general">General</option><option value="academic">Academic</option><option value="events">Events</option></select></div>
+                    <div class="form-group full-width"><label>Content</label><textarea id="noticeContent" placeholder="Notice content..."></textarea></div>
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;color:#374151;"><input type="checkbox" id="noticeImportant"> Mark as Important</label>
+                <div style="margin-top:16px;display:flex;gap:12px;">
+                    <button class="btn-action-green" id="noticeSubmitBtn" onclick="window._dash.submitNotice()">Publish Notice</button>
+                    <button class="btn-action-outline" onclick="window._dash.toggleNoticeForm()">Cancel</button>
+                </div>
+            </div>
+            <div id="noticesList"></div>
+        </div>
+
+        <!-- Syllabus Management Panel -->
+        <div class="tab-panel" id="panel-mgmt-syllabus">
+            <div class="tab-header">
+                <h2>Syllabus Management</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-action-green" onclick="window._dash.toggleSyllabusForm()">+ Add Syllabus</button>
+                    <button class="btn-refresh" id="refreshSyllabusAdmin"><span class="refresh-icon">&#8635;</span> Refresh</button>
+                </div>
+            </div>
+            <div class="mgmt-form" id="syllabusForm">
+                <h3 id="syllabusFormTitle">Add Syllabus</h3>
+                <div class="mgmt-form-grid">
+                    <div class="form-group"><label>Class</label><select id="syllabusClass"><option value="">Select class</option><option>Std 1</option><option>Std 2</option><option>Std 3</option><option>Std 4</option><option>Std 5</option><option>Std 6</option><option>Std 7</option><option>Std 8</option><option>Std 9</option><option>Std 10</option><option>Std 11</option><option>Std 12</option></select></div>
+                    <div class="form-group"><label>Subject</label><input type="text" id="syllabusSubject" placeholder="e.g. Mathematics"></div>
+                    <div class="form-group full-width"><label>Description</label><textarea id="syllabusDesc" placeholder="Topics covered..."></textarea></div>
+                    <div class="form-group"><label>Academic Year</label><input type="text" id="syllabusYear" value="2024-25"></div>
+                </div>
+                <div style="margin-top:16px;display:flex;gap:12px;">
+                    <button class="btn-action-green" id="syllabusSubmitBtn" onclick="window._dash.submitSyllabus()">Add Syllabus</button>
+                    <button class="btn-action-outline" onclick="window._dash.toggleSyllabusForm()">Cancel</button>
+                </div>
+            </div>
+            <div class="table-wrapper"><table class="teachers-table"><thead><tr><th>Class</th><th>Subject</th><th>Description</th><th>Year</th><th>Actions</th></tr></thead><tbody id="syllabusTableBody"><tr><td colspan="5" class="empty-state">Loading...</td></tr></tbody></table></div>
+        </div>
+
+        <!-- Fees Management Panel -->
+        <div class="tab-panel" id="panel-mgmt-fees">
+            <div class="tab-header">
+                <h2>Fees Structure</h2>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-action-green" onclick="window._dash.toggleFeeForm()">+ Add Fee</button>
+                    <button class="btn-refresh" id="refreshFees"><span class="refresh-icon">&#8635;</span> Refresh</button>
+                </div>
+            </div>
+            <div class="mgmt-form" id="feeForm">
+                <h3 id="feeFormTitle">Add Fee Structure</h3>
+                <div class="mgmt-form-grid">
+                    <div class="form-group"><label>Class Range</label><input type="text" id="feeClassRange" placeholder="e.g. Std 1-5"></div>
+                    <div class="form-group"><label>Tuition Fee</label><input type="number" id="feeTuition" placeholder="Amount" oninput="window._dash.calcFeeTotal()"></div>
+                    <div class="form-group"><label>Exam Fee</label><input type="number" id="feeExam" placeholder="Optional" oninput="window._dash.calcFeeTotal()"></div>
+                    <div class="form-group"><label>Lab Fee</label><input type="number" id="feeLab" placeholder="Optional" oninput="window._dash.calcFeeTotal()"></div>
+                    <div class="form-group"><label>Sports Fee</label><input type="number" id="feeSports" placeholder="Optional" oninput="window._dash.calcFeeTotal()"></div>
+                    <div class="form-group"><label>Transport Fee</label><input type="number" id="feeTransport" placeholder="Optional" oninput="window._dash.calcFeeTotal()"></div>
+                    <div class="form-group"><label>Total Fee</label><input type="text" id="feeTotal" readonly style="background:#f9fafb;font-weight:600;"></div>
+                    <div class="form-group"><label>Academic Year</label><input type="text" id="feeYear" value="2024-25"></div>
+                </div>
+                <div style="margin-top:16px;display:flex;gap:12px;">
+                    <button class="btn-action-green" id="feeSubmitBtn" onclick="window._dash.submitFee()">Add Fees</button>
+                    <button class="btn-action-outline" onclick="window._dash.toggleFeeForm()">Cancel</button>
+                </div>
+            </div>
+            <div class="table-wrapper" style="overflow-x:auto;"><table class="teachers-table"><thead><tr><th>Class</th><th>Tuition</th><th>Exam</th><th>Lab</th><th>Sports</th><th>Transport</th><th>Total</th><th>Year</th><th>Actions</th></tr></thead><tbody id="feesTableBody"><tr><td colspan="9" class="empty-state">Loading...</td></tr></tbody></table></div>
         </div>
 
       </div>
@@ -1015,8 +1178,26 @@
           events: 'Events',
           notifications: 'Notifications',
           syllabus: 'Syllabus',
-          teachers: 'Manage Teachers'
+          teachers: 'Manage Teachers',
+          'mgmt-gallery': 'Gallery Management',
+          'mgmt-notices': 'Notice Board',
+          'mgmt-syllabus': 'Syllabus Management',
+          'mgmt-fees': 'Fees Structure'
         };
+
+        // ── Management Tabs (Principal Only) ───────────────────
+        if (currentUser.role === 'principal') {
+          ['mgmtGalleryTab','mgmtNoticesTab','mgmtSyllabusTab','mgmtFeesTab'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.style.display = 'flex';
+          });
+        }
+
+        // Management state
+        var galleryLoaded = false, noticesLoadedMgmt = false, syllabusAdminLoaded = false, feesLoaded = false;
+
+        // Expose management functions
+        window._dash = {};
 
         // ── Sidebar tab switching ─────────────────────────────
         sidebarNav.addEventListener('click', function (e) {
@@ -1058,6 +1239,12 @@
               loadTeachers();
             }
           }
+
+          // Lazy-load management tabs
+          if (tab === 'mgmt-gallery' && !galleryLoaded) window._dash.loadGallery();
+          if (tab === 'mgmt-notices' && !noticesLoadedMgmt) window._dash.loadNotices();
+          if (tab === 'mgmt-syllabus' && !syllabusAdminLoaded) window._dash.loadSyllabusAdmin();
+          if (tab === 'mgmt-fees' && !feesLoaded) window._dash.loadFees();
         }
 
         // ── Hamburger ─────────────────────────────────────────
@@ -1110,9 +1297,164 @@
           renderNotifications();
         });
 
+        // ── Management refresh buttons ───────────────────────
+        document.getElementById('refreshGallery').addEventListener('click', function(){ window._dash.loadGallery(); });
+        document.getElementById('refreshNotices').addEventListener('click', function(){ window._dash.loadNotices(); });
+        document.getElementById('refreshSyllabusAdmin').addEventListener('click', function(){ window._dash.loadSyllabusAdmin(); });
+        document.getElementById('refreshFees').addEventListener('click', function(){ window._dash.loadFees(); });
+
         // ── Load Syllabus on init ─────────────────────────────
         loadSyllabus();
       }
+
+      // ── Management Functions (Gallery, Notices, Syllabus, Fees) ─
+      (function() {
+        var galleryImages = [], allNotices = [], allSyllabus = [], allFees = [];
+        var galleryFile = null, editingNoticeId = null, editingSyllabusId = null, editingFeeId = null;
+
+        // ── Gallery ─────────────────────────────────────
+        window._dash.loadGallery = function() {
+          galleryLoaded = true;
+          fetch('/api/gallery', { credentials:'include', headers:{'Accept':'application/json'} })
+          .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+          .then(function(d){ galleryImages = d.images || []; window._dash.renderGallery(); })
+          .catch(function(){ document.getElementById('galleryGrid').innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;</div><p>Failed to load</p></div>'; });
+        };
+        window._dash.renderGallery = function() {
+          var c = document.getElementById('galleryGrid');
+          if (!galleryImages.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128247;</div><p>No images yet</p></div>'; return; }
+          c.innerHTML = galleryImages.map(function(img) {
+            return '<div class="gallery-card"><button class="gallery-del" onclick="window._dash.deleteGalleryImage(\''+img.id+'\')">&#10005;</button><img src="'+escapeHtml(img.imageUrl)+'" alt=""><div class="gallery-card-info"><span class="gallery-cat">'+escapeHtml(img.category||'general')+'</span></div></div>';
+          }).join('');
+        };
+        window._dash.toggleGalleryForm = function() {
+          var f = document.getElementById('galleryForm'); f.classList.toggle('show');
+          if (!f.classList.contains('show')) { galleryFile=null; document.getElementById('galleryUploadZone').innerHTML='<div style="font-size:32px;margin-bottom:8px;">&#128247;</div><p>Click or drag an image to upload</p>'; document.getElementById('galleryUploadZone').classList.remove('has-image'); }
+        };
+        window._dash.handleGalleryFile = function(file) {
+          if (!file||!file.type.startsWith('image/')) return;
+          galleryFile = file;
+          var r = new FileReader();
+          r.onload = function(e) { document.getElementById('galleryUploadZone').innerHTML='<img src="'+e.target.result+'"><p style="margin-top:8px;font-size:0.8rem;color:#6b7280;">'+escapeHtml(file.name)+'</p>'; document.getElementById('galleryUploadZone').classList.add('has-image'); };
+          r.readAsDataURL(file);
+        };
+        window._dash.uploadGalleryImage = function() {
+          if (!galleryFile) return;
+          var title = document.getElementById('galleryTitle').value.trim() || 'Image';
+          var category = document.getElementById('galleryCategory').value;
+          var r = new FileReader();
+          r.onload = async function(e) {
+            try {
+              var u = await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({imageData:e.target.result,folder:'gallery'})});
+              var ud = await u.json(); if(!u.ok) return;
+              var g = await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({title,description:'',imageUrl:ud.url,category,isPublished:true})});
+              if(g.ok) { document.getElementById('galleryTitle').value=''; window._dash.toggleGalleryForm(); window._dash.loadGallery(); }
+            } catch(err){}
+          };
+          r.readAsDataURL(galleryFile);
+        };
+        window._dash.deleteGalleryImage = function(id) {
+          if(!confirm('Delete this image?')) return;
+          fetch('/api/gallery/'+id,{method:'DELETE',credentials:'include'}).then(function(r){if(r.ok) window._dash.loadGallery();});
+        };
+
+        // ── Notices ────────────────────────────────────
+        window._dash.loadNotices = function() {
+          noticesLoadedMgmt = true;
+          fetch('/api/notifications',{credentials:'include'}).then(function(r){return r.json();}).then(function(d){allNotices=d.notifications||[];window._dash.renderNotices();}).catch(function(){});
+        };
+        window._dash.renderNotices = function() {
+          var c = document.getElementById('noticesList');
+          if (!allNotices.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">&#128227;</div><p>No notices yet</p></div>'; return; }
+          c.innerHTML = allNotices.map(function(n) {
+            return '<div class="notice-card '+(n.category||'general')+'"><div class="notice-title">'+escapeHtml(n.title)+(n.isImportant?' <span style="color:#dc2626;font-size:0.75rem;font-weight:600;">IMPORTANT</span>':'')+'</div><div class="notice-body">'+escapeHtml(n.content)+'</div><div class="notice-actions"><button class="btn-action-green" onclick="window._dash.editNotice(\''+n.id+'\')">Edit</button><button class="btn-action-red" onclick="window._dash.deleteNotice(\''+n.id+'\')">Delete</button></div></div>';
+          }).join('');
+        };
+        window._dash.toggleNoticeForm = function() {
+          var f=document.getElementById('noticeForm'); f.classList.toggle('show');
+          if(!f.classList.contains('show')){f.reset();editingNoticeId=null;document.getElementById('noticeFormTitle').textContent='Add New Notice';document.getElementById('noticeSubmitBtn').textContent='Publish Notice';}
+        };
+        window._dash.submitNotice = async function() {
+          var title=document.getElementById('noticeTitle').value.trim(), content=document.getElementById('noticeContent').value.trim(), category=document.getElementById('noticeCategory').value, isImportant=document.getElementById('noticeImportant').checked;
+          if(!title||!content) return;
+          var body={title,content,category,isImportant,isPublished:true};
+          var url=editingNoticeId?'/api/notifications/'+editingNoticeId:'/api/notifications';
+          var method=editingNoticeId?'PUT':'POST';
+          var r=await fetch(url,{method,headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+          if(r.ok){window._dash.toggleNoticeForm();window._dash.loadNotices();}
+        };
+        window._dash.editNotice = function(id) {
+          var n=allNotices.find(function(x){return x.id===id;}); if(!n)return;
+          editingNoticeId=id;
+          document.getElementById('noticeTitle').value=n.title; document.getElementById('noticeContent').value=n.content; document.getElementById('noticeCategory').value=n.category||'general'; document.getElementById('noticeImportant').checked=n.isImportant;
+          document.getElementById('noticeFormTitle').textContent='Edit Notice'; document.getElementById('noticeSubmitBtn').textContent='Update Notice'; document.getElementById('noticeForm').classList.add('show');
+        };
+        window._dash.deleteNotice = function(id) { if(!confirm('Delete?'))return; fetch('/api/notifications/'+id,{method:'DELETE',credentials:'include'}).then(function(r){if(r.ok)window._dash.loadNotices();}); };
+
+        // ── Syllabus ──────────────────────────────────
+        window._dash.loadSyllabusAdmin = function() {
+          syllabusAdminLoaded=true;
+          fetch('/api/syllabus',{credentials:'include'}).then(function(r){return r.json();}).then(function(d){allSyllabus=d.syllabus||[];window._dash.renderSyllabusAdmin();}).catch(function(){});
+        };
+        window._dash.renderSyllabusAdmin = function() {
+          var tb=document.getElementById('syllabusTableBody');
+          if(!allSyllabus.length){tb.innerHTML='<tr><td colspan="5" class="empty-state"><div class="empty-icon">&#128218;</div><p>No syllabus yet</p></td></tr>';return;}
+          tb.innerHTML=allSyllabus.map(function(s){return '<tr><td><strong>'+escapeHtml(s.className)+'</strong></td><td>'+escapeHtml(s.subject)+'</td><td style="max-width:250px;">'+escapeHtml((s.description||'').substring(0,60))+((s.description||'').length>60?'...':'')+'</td><td>'+escapeHtml(s.academicYear)+'</td><td><div class="action-btns"><button class="btn-action-green" onclick="window._dash.editSyllabus(\''+s.id+'\')">Edit</button><button class="btn-action-red" onclick="window._dash.deleteSyllabus(\''+s.id+'\')">Del</button></div></td></tr>';}).join('');
+        };
+        window._dash.toggleSyllabusForm = function() {
+          var f=document.getElementById('syllabusForm');f.classList.toggle('show');
+          if(!f.classList.contains('show')){f.reset();editingSyllabusId=null;document.getElementById('syllabusFormTitle').textContent='Add Syllabus';document.getElementById('syllabusSubmitBtn').textContent='Add Syllabus';}
+        };
+        window._dash.submitSyllabus = async function() {
+          var className=document.getElementById('syllabusClass').value,subject=document.getElementById('syllabusSubject').value.trim(),description=document.getElementById('syllabusDesc').value.trim(),academicYear=document.getElementById('syllabusYear').value.trim()||'2024-25';
+          if(!className||!subject)return;
+          var body={className,subject,description,academicYear,isPublished:true};
+          var url=editingSyllabusId?'/api/syllabus/'+editingSyllabusId:'/api/syllabus';var method=editingSyllabusId?'PUT':'POST';
+          var r=await fetch(url,{method,headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+          if(r.ok){window._dash.toggleSyllabusForm();window._dash.loadSyllabusAdmin();}
+        };
+        window._dash.editSyllabus = function(id) {
+          var s=allSyllabus.find(function(x){return x.id===id;});if(!s)return;
+          editingSyllabusId=id;
+          document.getElementById('syllabusClass').value=s.className;document.getElementById('syllabusSubject').value=s.subject;document.getElementById('syllabusDesc').value=s.description||'';document.getElementById('syllabusYear').value=s.academicYear||'2024-25';
+          document.getElementById('syllabusFormTitle').textContent='Edit Syllabus';document.getElementById('syllabusSubmitBtn').textContent='Update';document.getElementById('syllabusForm').classList.add('show');
+        };
+        window._dash.deleteSyllabus = function(id){if(!confirm('Delete?'))return;fetch('/api/syllabus/'+id,{method:'DELETE',credentials:'include'}).then(function(r){if(r.ok)window._dash.loadSyllabusAdmin();});};
+
+        // ── Fees ─────────────────────────────────────
+        window._dash.loadFees = function() {
+          feesLoaded=true;
+          fetch('/api/fee-structure',{credentials:'include'}).then(function(r){return r.json();}).then(function(d){allFees=d.fees||[];window._dash.renderFees();}).catch(function(){});
+        };
+        window._dash.renderFees = function() {
+          var tb=document.getElementById('feesTableBody');
+          if(!allFees.length){tb.innerHTML='<tr><td colspan="9" class="empty-state"><div class="empty-icon">&#128176;</div><p>No fees yet</p></td></tr>';return;}
+          tb.innerHTML=allFees.map(function(f){return '<tr><td><strong>'+escapeHtml(f.classRange)+'</strong></td><td>'+escapeHtml(f.tuitionFee)+'</td><td>'+escapeHtml(f.examFee||'-')+'</td><td>'+escapeHtml(f.labFee||'-')+'</td><td>'+escapeHtml(f.sportsFee||'-')+'</td><td>'+escapeHtml(f.transportFee||'-')+'</td><td><strong>'+escapeHtml(f.totalFee)+'</strong></td><td>'+escapeHtml(f.academicYear)+'</td><td><div class="action-btns"><button class="btn-action-green" onclick="window._dash.editFee(\''+f.id+'\')">Edit</button><button class="btn-action-red" onclick="window._dash.deleteFee(\''+f.id+'\')">Del</button></div></td></tr>';}).join('');
+        };
+        window._dash.toggleFeeForm = function() {
+          var f=document.getElementById('feeForm');f.classList.toggle('show');
+          if(!f.classList.contains('show')){f.reset();editingFeeId=null;document.getElementById('feeFormTitle').textContent='Add Fee Structure';document.getElementById('feeSubmitBtn').textContent='Add Fees';}
+        };
+        window._dash.calcFeeTotal = function() {
+          var t=parseFloat(document.getElementById('feeTuition').value)||0,e=parseFloat(document.getElementById('feeExam').value)||0,l=parseFloat(document.getElementById('feeLab').value)||0,s=parseFloat(document.getElementById('feeSports').value)||0,tr=parseFloat(document.getElementById('feeTransport').value)||0;
+          document.getElementById('feeTotal').value=(t+e+l+s+tr).toString();
+        };
+        window._dash.submitFee = async function() {
+          var classRange=document.getElementById('feeClassRange').value.trim(),tuitionFee=document.getElementById('feeTuition').value.trim(),totalFee=document.getElementById('feeTotal').value.trim(),academicYear=document.getElementById('feeYear').value.trim()||'2024-25';
+          if(!classRange||!tuitionFee)return;
+          var body={classRange,tuitionFee,examFee:document.getElementById('feeExam').value.trim()||null,labFee:document.getElementById('feeLab').value.trim()||null,sportsFee:document.getElementById('feeSports').value.trim()||null,transportFee:document.getElementById('feeTransport').value.trim()||null,totalFee,academicYear,isPublished:true};
+          var url=editingFeeId?'/api/fee-structure/'+editingFeeId:'/api/fee-structure';var method=editingFeeId?'PUT':'POST';
+          var r=await fetch(url,{method,headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+          if(r.ok){window._dash.toggleFeeForm();window._dash.loadFees();}
+        };
+        window._dash.editFee = function(id) {
+          var f=allFees.find(function(x){return x.id===id;});if(!f)return;
+          editingFeeId=id;
+          document.getElementById('feeClassRange').value=f.classRange;document.getElementById('feeTuition').value=f.tuitionFee;document.getElementById('feeExam').value=f.examFee||'';document.getElementById('feeLab').value=f.labFee||'';document.getElementById('feeSports').value=f.sportsFee||'';document.getElementById('feeTransport').value=f.transportFee||'';document.getElementById('feeTotal').value=f.totalFee;document.getElementById('feeYear').value=f.academicYear||'2024-25';
+          document.getElementById('feeFormTitle').textContent='Edit Fee Structure';document.getElementById('feeSubmitBtn').textContent='Update';document.getElementById('feeForm').classList.add('show');
+        };
+        window._dash.deleteFee = function(id){if(!confirm('Delete?'))return;fetch('/api/fee-structure/'+id,{method:'DELETE',credentials:'include'}).then(function(r){if(r.ok)window._dash.loadFees();});};
+      })();
 
       // ── Events ─────────────────────────────────────────────────
       function loadEvents() {

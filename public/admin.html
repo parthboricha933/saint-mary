@@ -899,6 +899,54 @@
             font-family: inherit; color: #374151; transition: all 0.15s;
         }
         .filter-btn.active, .filter-btn:hover { background: #065f46; color: #fff; border-color: #065f46; }
+
+        /* Management Tabs */
+        .mgmt-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
+        .mgmt-header h1 { font-size:28px; font-weight:700; color:#111827; margin-bottom:4px; }
+        .mgmt-header p { font-size:14px; color:#6b7280; }
+
+        .mgmt-form { background:#fff; border-radius:12px; padding:24px; border:1px solid #e5e7eb; margin-bottom:24px; display:none; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+        .mgmt-form.show { display:block; }
+        .mgmt-form h3 { font-size:16px; font-weight:700; color:#111827; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #f3f4f6; }
+        .mgmt-form .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .mgmt-form .form-grid .full-width { grid-column:1/-1; }
+        .mgmt-form textarea { width:100%; min-height:100px; padding:10px 14px; border:1.5px solid #d1d5db; border-radius:8px; font-family:inherit; font-size:15px; resize:vertical; }
+        .mgmt-form textarea:focus { outline:none; border-color:#059669; box-shadow:0 0 0 3px rgba(5,150,105,0.15); }
+        .mgmt-form label { display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:6px; }
+        .mgmt-form input, .mgmt-form select { width:100%; padding:10px 14px; border:1.5px solid #d1d5db; border-radius:8px; font-size:15px; font-family:inherit; color:#1f2937; background:#fff; }
+        .mgmt-form input:focus, .mgmt-form select:focus { outline:none; border-color:#059669; box-shadow:0 0 0 3px rgba(5,150,105,0.15); }
+        .mgmt-form .checkbox-group { display:flex; align-items:center; gap:8px; margin-top:24px; }
+        .mgmt-form .checkbox-group input[type=checkbox] { width:auto; }
+        .mgmt-form .form-actions { margin-top:16px; display:flex; gap:12px; }
+
+        .gallery-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
+        .gallery-card { background:#fff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb; position:relative; }
+        .gallery-card img { width:100%; height:160px; object-fit:cover; display:block; }
+        .gallery-card-info { padding:12px; }
+        .gallery-card-info .gallery-cat { display:inline-block; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:600; background:#ecfdf5; color:#065f46; margin-bottom:6px; }
+        .gallery-card .gallery-del { position:absolute; top:8px; right:8px; background:rgba(220,38,38,0.9); color:#fff; border:none; border-radius:50%; width:30px; height:30px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
+        .gallery-card:hover .gallery-del { opacity:1; }
+
+        .upload-zone { border:2px dashed #d1d5db; border-radius:12px; padding:32px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:16px; }
+        .upload-zone:hover { border-color:#059669; background:#f0fdf4; }
+        .upload-zone.has-image { padding:12px; }
+        .upload-zone img { max-height:200px; border-radius:8px; }
+
+        .notice-card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px 20px; margin-bottom:12px; border-left:4px solid #9ca3af; }
+        .notice-card.academic { border-left-color:#3b82f6; }
+        .notice-card.events { border-left-color:#8b5cf6; }
+        .notice-card.general { border-left-color:#9ca3af; }
+        .notice-card .notice-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+        .notice-card .notice-title { font-size:15px; font-weight:600; color:#111827; }
+        .notice-card .notice-body { font-size:13px; color:#4b5563; line-height:1.5; margin-bottom:8px; }
+        .notice-card .notice-meta { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+        .notice-card .notice-actions { display:flex; gap:6px; }
+
+        @media (max-width:768px) {
+            .mgmt-form .form-grid { grid-template-columns:1fr; }
+            .mgmt-form .form-grid .full-width { grid-column:1; }
+            .gallery-grid { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); }
+        }
     </style>
 </head>
 <body>
@@ -993,6 +1041,19 @@
             <button class="sidebar-nav-item" data-tab="messages" onclick="switchTab('messages', this)">
                 <span class="nav-icon">&#9993;</span> Messages
                 <span class="badge" id="msgBadge" style="display:none;">0</span>
+            </button>
+            <div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 16px;"></div>
+            <button class="sidebar-nav-item" data-tab="gallery" onclick="switchTab('gallery', this)">
+                <span class="nav-icon">&#128247;</span> Gallery
+            </button>
+            <button class="sidebar-nav-item" data-tab="notices" onclick="switchTab('notices', this)">
+                <span class="nav-icon">&#128227;</span> Notices
+            </button>
+            <button class="sidebar-nav-item" data-tab="syllabus" onclick="switchTab('syllabus', this)">
+                <span class="nav-icon">&#128218;</span> Syllabus
+            </button>
+            <button class="sidebar-nav-item" data-tab="fees" onclick="switchTab('fees', this)">
+                <span class="nav-icon">&#128176;</span> Fees Structure
             </button>
         </nav>
         <div class="sidebar-footer">
@@ -1162,6 +1223,240 @@
             </div>
         </div>
 
+        <!-- ===== GALLERY TAB ===== -->
+        <div class="tab-content" id="tab-gallery">
+            <div class="mgmt-header">
+                <div>
+                    <h1>Gallery Management</h1>
+                    <p>Upload and manage school gallery images.</p>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn btn-green btn-sm" onclick="toggleGalleryForm(true)">&#10010; Upload Image</button>
+                    <button class="btn btn-outline" onclick="loadGallery()">&#128260; Refresh</button>
+                </div>
+            </div>
+
+            <div class="mgmt-form" id="galleryForm">
+                <h3>Upload New Image</h3>
+                <input type="file" id="galleryFileInput" accept="image/*" style="display:none;" onchange="handleGalleryFile(this.files[0])">
+                <div class="upload-zone" id="galleryUploadZone">
+                    <div style="font-size:32px;margin-bottom:8px;">&#128247;</div>
+                    <p>Click or drag an image to upload</p>
+                </div>
+                <div class="mgmt-form" style="display:block;border:none;padding:0;box-shadow:none;margin-bottom:0;">
+                    <div class="form-grid">
+                        <div>
+                            <label>Title</label>
+                            <input type="text" id="galleryTitle" placeholder="Image title (optional)">
+                        </div>
+                        <div>
+                            <label>Category</label>
+                            <select id="galleryCategory">
+                                <option value="general">General</option>
+                                <option value="campus">Campus</option>
+                                <option value="activities">Activities</option>
+                                <option value="events">Events</option>
+                                <option value="classroom">Classroom</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-green" onclick="uploadGalleryImage()">&#128228; Upload</button>
+                        <button class="btn btn-outline" onclick="toggleGalleryForm(false)">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-grid" id="galleryGrid">
+                <div class="empty-state" style="grid-column:1/-1;">
+                    <div class="empty-icon">&#128247;</div>
+                    <p>No gallery images yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== NOTICES TAB ===== -->
+        <div class="tab-content" id="tab-notices">
+            <div class="mgmt-header">
+                <div>
+                    <h1>Notice Board</h1>
+                    <p>Create and manage school notices and announcements.</p>
+                </div>
+                <button class="btn btn-green btn-sm" onclick="toggleNoticeForm(true)">&#10010; Add Notice</button>
+            </div>
+
+            <div class="mgmt-form" id="noticeForm">
+                <h3 id="noticeFormTitle">Add New Notice</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>Title</label>
+                        <input type="text" id="noticeTitle" placeholder="Notice title">
+                    </div>
+                    <div>
+                        <label>Category</label>
+                        <select id="noticeCategory">
+                            <option value="general">General</option>
+                            <option value="academic">Academic</option>
+                            <option value="events">Events</option>
+                        </select>
+                    </div>
+                    <div class="full-width">
+                        <label>Content</label>
+                        <textarea id="noticeContent" placeholder="Notice content..."></textarea>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="noticeImportant">
+                    <label for="noticeImportant" style="margin-bottom:0;">Mark as Important</label>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-green" id="noticeSubmitBtn" onclick="submitNotice()">&#128227; Publish Notice</button>
+                    <button class="btn btn-outline" onclick="toggleNoticeForm(false)">Cancel</button>
+                </div>
+            </div>
+
+            <div id="noticesList">
+                <div class="empty-state"><div class="empty-icon">&#128227;</div><p>No notices yet</p></div>
+            </div>
+        </div>
+
+        <!-- ===== SYLLABUS TAB ===== -->
+        <div class="tab-content" id="tab-syllabus">
+            <div class="mgmt-header">
+                <div>
+                    <h1>Syllabus Management</h1>
+                    <p>Manage class-wise syllabus information.</p>
+                </div>
+                <button class="btn btn-green btn-sm" onclick="toggleSyllabusForm(true)">&#10010; Add Syllabus</button>
+            </div>
+
+            <div class="mgmt-form" id="syllabusForm">
+                <h3 id="syllabusFormTitle">Add Syllabus</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>Class</label>
+                        <select id="syllabusClass">
+                            <option value="">Select Class</option>
+                            <option>Std 1</option><option>Std 2</option><option>Std 3</option><option>Std 4</option><option>Std 5</option>
+                            <option>Std 6</option><option>Std 7</option><option>Std 8</option><option>Std 9</option><option>Std 10</option>
+                            <option>Std 11</option><option>Std 12</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Subject</label>
+                        <input type="text" id="syllabusSubject" placeholder="e.g. Mathematics">
+                    </div>
+                    <div class="full-width">
+                        <label>Description</label>
+                        <textarea id="syllabusDesc" placeholder="Syllabus description..."></textarea>
+                    </div>
+                    <div>
+                        <label>Academic Year</label>
+                        <input type="text" id="syllabusYear" value="2024-25" placeholder="e.g. 2024-25">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-green" id="syllabusSubmitBtn" onclick="submitSyllabus()">&#128218; Add Syllabus</button>
+                    <button class="btn btn-outline" onclick="toggleSyllabusForm(false)">Cancel</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Description</th>
+                                <th>Academic Year</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="syllabusTableBody">
+                            <tr><td colspan="5" class="empty-state"><div class="empty-icon">&#128218;</div><p>No syllabus items yet</p></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== FEES STRUCTURE TAB ===== -->
+        <div class="tab-content" id="tab-fees">
+            <div class="mgmt-header">
+                <div>
+                    <h1>Fees Structure</h1>
+                    <p>Manage class-wise fee structures.</p>
+                </div>
+                <button class="btn btn-green btn-sm" onclick="toggleFeeForm(true)">&#10010; Add Fee</button>
+            </div>
+
+            <div class="mgmt-form" id="feeForm">
+                <h3 id="feeFormTitle">Add Fee Structure</h3>
+                <div class="form-grid">
+                    <div>
+                        <label>Class Range</label>
+                        <input type="text" id="feeClassRange" placeholder="e.g. Std 1-5">
+                    </div>
+                    <div>
+                        <label>Tuition Fee</label>
+                        <input type="number" id="feeTuition" placeholder="0" oninput="calcFeeTotal()">
+                    </div>
+                    <div>
+                        <label>Exam Fee</label>
+                        <input type="number" id="feeExam" placeholder="0" oninput="calcFeeTotal()">
+                    </div>
+                    <div>
+                        <label>Lab Fee</label>
+                        <input type="number" id="feeLab" placeholder="0" oninput="calcFeeTotal()">
+                    </div>
+                    <div>
+                        <label>Sports Fee</label>
+                        <input type="number" id="feeSports" placeholder="0" oninput="calcFeeTotal()">
+                    </div>
+                    <div>
+                        <label>Transport Fee</label>
+                        <input type="number" id="feeTransport" placeholder="0" oninput="calcFeeTotal()">
+                    </div>
+                    <div>
+                        <label>Total Fee (auto)</label>
+                        <input type="text" id="feeTotal" readonly style="background:#f9fafb;font-weight:700;">
+                    </div>
+                    <div>
+                        <label>Academic Year</label>
+                        <input type="text" id="feeYear" value="2024-25" placeholder="e.g. 2024-25">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-green" id="feeSubmitBtn" onclick="submitFee()">&#128176; Add Fees</button>
+                    <button class="btn btn-outline" onclick="toggleFeeForm(false)">Cancel</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Class Range</th>
+                                <th>Tuition</th>
+                                <th>Exam</th>
+                                <th>Lab</th>
+                                <th>Sports</th>
+                                <th>Transport</th>
+                                <th>Total</th>
+                                <th>Year</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feesTableBody">
+                            <tr><td colspan="9" class="empty-state"><div class="empty-icon">&#128176;</div><p>No fee structures yet</p></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -1297,6 +1592,12 @@
         if (tabId === 'manage-users' || tabId === 'overview') {
             loadUsers();
         }
+        if (tabId === 'inquiries') loadInquiries();
+        if (tabId === 'messages') loadMessages();
+        if (tabId === 'gallery') loadGallery();
+        if (tabId === 'notices') loadNotices();
+        if (tabId === 'syllabus') loadSyllabusAdmin();
+        if (tabId === 'fees') loadFees();
     }
 
     /* ============================================================
@@ -1810,6 +2111,426 @@
         return div.innerHTML;
     }
 
+    // ============ GALLERY MANAGEMENT ============
+    var galleryImages = [];
+    var galleryFile = null;
+
+    function loadGallery() {
+        fetch('/api/gallery', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                galleryImages = data.images || [];
+                renderGallery();
+            })
+            .catch(function(e) { showToast('Failed to load gallery', 'error'); });
+    }
+
+    function renderGallery() {
+        var container = document.getElementById('galleryGrid');
+        if (!galleryImages.length) {
+            container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">&#128247;</div><p>No gallery images yet</p></div>';
+            return;
+        }
+        container.innerHTML = galleryImages.map(function(img) {
+            return '<div class="gallery-card">' +
+                '<button class="gallery-del" onclick="deleteGalleryImage(\'' + img.id + '\')" title="Delete">&#10005;</button>' +
+                '<img src="' + escapeHtml(img.imageUrl || '') + '" alt="' + escapeHtml(img.title || '') + '" onerror="this.src=\'uploads/school-logo.png\'">' +
+                '<div class="gallery-card-info">' +
+                '<span class="gallery-cat">' + escapeHtml(img.category || 'general') + '</span>' +
+                '</div></div>';
+        }).join('');
+    }
+
+    function toggleGalleryForm(show) {
+        document.getElementById('galleryForm').classList.toggle('show', show);
+        if (!show) {
+            galleryFile = null;
+            var zone = document.getElementById('galleryUploadZone');
+            zone.innerHTML = '<div style="font-size:32px;margin-bottom:8px;">&#128247;</div><p>Click or drag an image to upload</p>';
+            zone.classList.remove('has-image');
+            document.getElementById('galleryTitle').value = '';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var uploadZone = document.getElementById('galleryUploadZone');
+        if (uploadZone) {
+            uploadZone.addEventListener('click', function() { document.getElementById('galleryFileInput').click(); });
+            uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); uploadZone.style.borderColor = '#059669'; });
+            uploadZone.addEventListener('dragleave', function() { uploadZone.style.borderColor = '#d1d5db'; });
+            uploadZone.addEventListener('drop', function(e) { e.preventDefault(); uploadZone.style.borderColor = '#d1d5db'; handleGalleryFile(e.dataTransfer.files[0]); });
+        }
+    });
+
+    function handleGalleryFile(file) {
+        if (!file || !file.type.startsWith('image/')) { showToast('Please select an image file', 'error'); return; }
+        galleryFile = file;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('galleryUploadZone').innerHTML = '<img src="' + e.target.result + '" alt="Preview"><p style="margin-top:8px;font-size:13px;color:#6b7280;">' + escapeHtml(file.name) + '</p>';
+            document.getElementById('galleryUploadZone').classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function uploadGalleryImage() {
+        if (!galleryFile) { showToast('Please select an image', 'error'); return; }
+        var title = document.getElementById('galleryTitle').value.trim() || 'Gallery Image';
+        var category = document.getElementById('galleryCategory').value;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ imageData: e.target.result, folder: 'gallery' })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(uploadData) {
+                return fetch('/api/gallery', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ title: title, description: '', imageUrl: uploadData.url, category: category, isPublished: true })
+                });
+            })
+            .then(function(res) {
+                if (res.ok) { showToast('Image uploaded successfully!', 'success'); toggleGalleryForm(false); loadGallery(); }
+                else return res.json().then(function(d) { throw new Error(d.error || 'Failed'); });
+            })
+            .catch(function(err) { showToast('Upload failed: ' + err.message, 'error'); });
+        };
+        reader.readAsDataURL(galleryFile);
+    }
+
+    function deleteGalleryImage(id) {
+        if (!confirm('Delete this image?')) return;
+        fetch('/api/gallery/' + id, { method: 'DELETE', credentials: 'include' })
+            .then(function(res) {
+                if (res.ok) { showToast('Image deleted', 'success'); loadGallery(); }
+                else showToast('Failed to delete', 'error');
+            })
+            .catch(function(e) { showToast('Failed to delete', 'error'); });
+    }
+
+    // ============ NOTICES MANAGEMENT ============
+    var allNotices = [];
+    var editingNoticeId = null;
+
+    function loadNotices() {
+        fetch('/api/notifications', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                allNotices = data.notifications || [];
+                renderNotices();
+            })
+            .catch(function(e) { showToast('Failed to load notices', 'error'); });
+    }
+
+    function renderNotices() {
+        var container = document.getElementById('noticesList');
+        if (!allNotices.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128227;</div><p>No notices yet</p></div>';
+            return;
+        }
+        container.innerHTML = allNotices.map(function(n) {
+            var catClass = n.category || 'general';
+            var importantBadge = n.isImportant ? ' <span class="badge" style="background:#fef2f2;color:#dc2626;">Important</span>' : '';
+            var dateStr = n.createdAt ? new Date(n.createdAt).toLocaleString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
+            return '<div class="notice-card ' + catClass + '">' +
+                '<div class="notice-head">' +
+                '<span class="notice-title">' + escapeHtml(n.title) + '</span>' +
+                '<div class="notice-meta">' +
+                '<span class="badge badge-role">' + escapeHtml(catClass) + '</span>' + importantBadge +
+                '</div></div>' +
+                '<div class="notice-body">' + escapeHtml(n.content) + '</div>' +
+                (dateStr ? '<div style="font-size:12px;color:#9ca3af;margin-bottom:8px;">&#128197; ' + dateStr + '</div>' : '') +
+                '<div class="notice-actions">' +
+                '<button class="btn btn-green btn-sm" onclick="editNotice(\'' + n.id + '\')">&#9998; Edit</button>' +
+                '<button class="btn btn-red btn-sm" onclick="deleteNotice(\'' + n.id + '\')">&#128465; Delete</button>' +
+                '</div></div>';
+        }).join('');
+    }
+
+    function toggleNoticeForm(show) {
+        var form = document.getElementById('noticeForm');
+        form.classList.toggle('show', show);
+        if (!show) {
+            form.reset();
+            editingNoticeId = null;
+            document.querySelector('#noticeFormTitle').textContent = 'Add New Notice';
+            document.getElementById('noticeSubmitBtn').textContent = '&#128227; Publish Notice';
+        }
+    }
+
+    function submitNotice() {
+        var title = document.getElementById('noticeTitle').value.trim();
+        var content = document.getElementById('noticeContent').value.trim();
+        var category = document.getElementById('noticeCategory').value;
+        var isImportant = document.getElementById('noticeImportant').checked;
+        if (!title || !content) { showToast('Title and content are required', 'error'); return; }
+
+        var body = { title: title, content: content, category: category, isImportant: isImportant, isPublished: true };
+        var url = editingNoticeId ? '/api/notifications/' + editingNoticeId : '/api/notifications';
+        var method = editingNoticeId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        })
+        .then(function(res) {
+            if (res.ok) {
+                showToast(editingNoticeId ? 'Notice updated!' : 'Notice published!', 'success');
+                toggleNoticeForm(false);
+                loadNotices();
+            } else {
+                showToast('Failed to save notice', 'error');
+            }
+        })
+        .catch(function(e) { showToast('Failed to save notice', 'error'); });
+    }
+
+    function editNotice(id) {
+        var n = allNotices.find(function(x) { return x.id === id; });
+        if (!n) return;
+        editingNoticeId = id;
+        document.getElementById('noticeTitle').value = n.title;
+        document.getElementById('noticeContent').value = n.content;
+        document.getElementById('noticeCategory').value = n.category || 'general';
+        document.getElementById('noticeImportant').checked = n.isImportant;
+        document.querySelector('#noticeFormTitle').textContent = 'Edit Notice';
+        document.getElementById('noticeSubmitBtn').textContent = '&#128227; Update Notice';
+        document.getElementById('noticeForm').classList.add('show');
+    }
+
+    function deleteNotice(id) {
+        if (!confirm('Delete this notice?')) return;
+        fetch('/api/notifications/' + id, { method: 'DELETE', credentials: 'include' })
+            .then(function(res) {
+                if (res.ok) { showToast('Notice deleted', 'success'); loadNotices(); }
+                else showToast('Failed to delete', 'error');
+            })
+            .catch(function(e) { showToast('Failed to delete', 'error'); });
+    }
+
+    // ============ SYLLABUS MANAGEMENT ============
+    var allSyllabus = [];
+    var editingSyllabusId = null;
+
+    function loadSyllabusAdmin() {
+        fetch('/api/syllabus', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                allSyllabus = data.syllabus || [];
+                renderSyllabusAdmin();
+            })
+            .catch(function(e) { showToast('Failed to load syllabus', 'error'); });
+    }
+
+    function renderSyllabusAdmin() {
+        var tbody = document.getElementById('syllabusTableBody');
+        if (!allSyllabus.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-icon">&#128218;</div><p>No syllabus items yet</p></td></tr>';
+            return;
+        }
+        tbody.innerHTML = allSyllabus.map(function(s) {
+            var desc = (s.description || '');
+            var descTrunc = desc.length > 80 ? desc.substring(0, 80) + '...' : desc;
+            return '<tr>' +
+                '<td><strong>' + escapeHtml(s.className) + '</strong></td>' +
+                '<td>' + escapeHtml(s.subject) + '</td>' +
+                '<td style="max-width:300px;">' + escapeHtml(descTrunc) + '</td>' +
+                '<td>' + escapeHtml(s.academicYear) + '</td>' +
+                '<td><div class="actions-cell">' +
+                '<button class="btn btn-green btn-sm" onclick="editSyllabus(\'' + s.id + '\')">&#9998;</button>' +
+                '<button class="btn btn-red btn-sm" onclick="deleteSyllabus(\'' + s.id + '\')">&#128465;</button>' +
+                '</div></td></tr>';
+        }).join('');
+    }
+
+    function toggleSyllabusForm(show) {
+        document.getElementById('syllabusForm').classList.toggle('show', show);
+        if (!show) {
+            document.getElementById('syllabusForm').reset();
+            document.getElementById('syllabusYear').value = '2024-25';
+            editingSyllabusId = null;
+            document.querySelector('#syllabusFormTitle').textContent = 'Add Syllabus';
+            document.getElementById('syllabusSubmitBtn').innerHTML = '&#128218; Add Syllabus';
+        }
+    }
+
+    function submitSyllabus() {
+        var className = document.getElementById('syllabusClass').value;
+        var subject = document.getElementById('syllabusSubject').value.trim();
+        var description = document.getElementById('syllabusDesc').value.trim();
+        var academicYear = document.getElementById('syllabusYear').value.trim() || '2024-25';
+        if (!className || !subject) { showToast('Class and subject are required', 'error'); return; }
+
+        var body = { className: className, subject: subject, description: description, academicYear: academicYear, isPublished: true };
+        var url = editingSyllabusId ? '/api/syllabus/' + editingSyllabusId : '/api/syllabus';
+        var method = editingSyllabusId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        })
+        .then(function(res) {
+            if (res.ok) {
+                showToast(editingSyllabusId ? 'Syllabus updated!' : 'Syllabus added!', 'success');
+                toggleSyllabusForm(false);
+                loadSyllabusAdmin();
+            } else {
+                showToast('Failed to save', 'error');
+            }
+        })
+        .catch(function(e) { showToast('Failed to save', 'error'); });
+    }
+
+    function editSyllabus(id) {
+        var s = allSyllabus.find(function(x) { return x.id === id; });
+        if (!s) return;
+        editingSyllabusId = id;
+        document.getElementById('syllabusClass').value = s.className;
+        document.getElementById('syllabusSubject').value = s.subject;
+        document.getElementById('syllabusDesc').value = s.description || '';
+        document.getElementById('syllabusYear').value = s.academicYear || '2024-25';
+        document.querySelector('#syllabusFormTitle').textContent = 'Edit Syllabus';
+        document.getElementById('syllabusSubmitBtn').innerHTML = '&#128218; Update Syllabus';
+        document.getElementById('syllabusForm').classList.add('show');
+    }
+
+    function deleteSyllabus(id) {
+        if (!confirm('Delete this syllabus item?')) return;
+        fetch('/api/syllabus/' + id, { method: 'DELETE', credentials: 'include' })
+            .then(function(res) {
+                if (res.ok) { showToast('Syllabus deleted', 'success'); loadSyllabusAdmin(); }
+                else showToast('Failed to delete', 'error');
+            })
+            .catch(function(e) { showToast('Failed to delete', 'error'); });
+    }
+
+    // ============ FEES MANAGEMENT ============
+    var allFees = [];
+    var editingFeeId = null;
+
+    function loadFees() {
+        fetch('/api/fee-structure', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                allFees = data.fees || [];
+                renderFees();
+            })
+            .catch(function(e) { showToast('Failed to load fees', 'error'); });
+    }
+
+    function renderFees() {
+        var tbody = document.getElementById('feesTableBody');
+        if (!allFees.length) {
+            tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><div class="empty-icon">&#128176;</div><p>No fee structures yet</p></td></tr>';
+            return;
+        }
+        tbody.innerHTML = allFees.map(function(f) {
+            return '<tr>' +
+                '<td><strong>' + escapeHtml(f.classRange) + '</strong></td>' +
+                '<td>' + escapeHtml(f.tuitionFee) + '</td>' +
+                '<td>' + escapeHtml(f.examFee || '-') + '</td>' +
+                '<td>' + escapeHtml(f.labFee || '-') + '</td>' +
+                '<td>' + escapeHtml(f.sportsFee || '-') + '</td>' +
+                '<td>' + escapeHtml(f.transportFee || '-') + '</td>' +
+                '<td><strong>' + escapeHtml(f.totalFee) + '</strong></td>' +
+                '<td>' + escapeHtml(f.academicYear) + '</td>' +
+                '<td><div class="actions-cell">' +
+                '<button class="btn btn-green btn-sm" onclick="editFee(\'' + f.id + '\')">&#9998;</button>' +
+                '<button class="btn btn-red btn-sm" onclick="deleteFee(\'' + f.id + '\')">&#128465;</button>' +
+                '</div></td></tr>';
+        }).join('');
+    }
+
+    function toggleFeeForm(show) {
+        document.getElementById('feeForm').classList.toggle('show', show);
+        if (!show) {
+            document.getElementById('feeForm').reset();
+            document.getElementById('feeYear').value = '2024-25';
+            document.getElementById('feeTotal').value = '';
+            editingFeeId = null;
+            document.querySelector('#feeFormTitle').textContent = 'Add Fee Structure';
+            document.getElementById('feeSubmitBtn').innerHTML = '&#128176; Add Fees';
+        }
+    }
+
+    function calcFeeTotal() {
+        var t = parseFloat(document.getElementById('feeTuition').value) || 0;
+        var e = parseFloat(document.getElementById('feeExam').value) || 0;
+        var l = parseFloat(document.getElementById('feeLab').value) || 0;
+        var s = parseFloat(document.getElementById('feeSports').value) || 0;
+        var tr = parseFloat(document.getElementById('feeTransport').value) || 0;
+        document.getElementById('feeTotal').value = (t + e + l + s + tr).toString();
+    }
+
+    function submitFee() {
+        var classRange = document.getElementById('feeClassRange').value.trim();
+        var tuitionFee = document.getElementById('feeTuition').value.trim();
+        var examFee = document.getElementById('feeExam').value.trim() || null;
+        var labFee = document.getElementById('feeLab').value.trim() || null;
+        var sportsFee = document.getElementById('feeSports').value.trim() || null;
+        var transportFee = document.getElementById('feeTransport').value.trim() || null;
+        var totalFee = document.getElementById('feeTotal').value.trim();
+        var academicYear = document.getElementById('feeYear').value.trim() || '2024-25';
+        if (!classRange || !tuitionFee) { showToast('Class range and tuition fee are required', 'error'); return; }
+
+        var body = { classRange: classRange, tuitionFee: tuitionFee, examFee: examFee, labFee: labFee, sportsFee: sportsFee, transportFee: transportFee, totalFee: totalFee, academicYear: academicYear, isPublished: true };
+        var url = editingFeeId ? '/api/fee-structure/' + editingFeeId : '/api/fee-structure';
+        var method = editingFeeId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        })
+        .then(function(res) {
+            if (res.ok) {
+                showToast(editingFeeId ? 'Fee updated!' : 'Fee added!', 'success');
+                toggleFeeForm(false);
+                loadFees();
+            } else {
+                showToast('Failed to save', 'error');
+            }
+        })
+        .catch(function(e) { showToast('Failed to save', 'error'); });
+    }
+
+    function editFee(id) {
+        var f = allFees.find(function(x) { return x.id === id; });
+        if (!f) return;
+        editingFeeId = id;
+        document.getElementById('feeClassRange').value = f.classRange;
+        document.getElementById('feeTuition').value = f.tuitionFee;
+        document.getElementById('feeExam').value = f.examFee || '';
+        document.getElementById('feeLab').value = f.labFee || '';
+        document.getElementById('feeSports').value = f.sportsFee || '';
+        document.getElementById('feeTransport').value = f.transportFee || '';
+        document.getElementById('feeTotal').value = f.totalFee;
+        document.getElementById('feeYear').value = f.academicYear || '2024-25';
+        document.querySelector('#feeFormTitle').textContent = 'Edit Fee Structure';
+        document.getElementById('feeSubmitBtn').innerHTML = '&#128176; Update Fees';
+        document.getElementById('feeForm').classList.add('show');
+    }
+
+    function deleteFee(id) {
+        if (!confirm('Delete this fee structure?')) return;
+        fetch('/api/fee-structure/' + id, { method: 'DELETE', credentials: 'include' })
+            .then(function(res) {
+                if (res.ok) { showToast('Fee structure deleted', 'success'); loadFees(); }
+                else showToast('Failed to delete', 'error');
+            })
+            .catch(function(e) { showToast('Failed to delete', 'error'); });
+    }
+
     // Load counts on init
     function loadAdminCounts() {
         fetch('/api/contact-messages', { credentials: 'include' }).then(function(r) { return r.json(); }).then(function(data) {
@@ -1832,6 +2553,10 @@
         _origSwitchTab(tabId, navItem);
         if (tabId === 'messages') loadMessages();
         if (tabId === 'inquiries') loadInquiries();
+        if (tabId === 'gallery' && galleryImages.length === 0) loadGallery();
+        if (tabId === 'notices' && allNotices.length === 0) loadNotices();
+        if (tabId === 'syllabus' && allSyllabus.length === 0) loadSyllabusAdmin();
+        if (tabId === 'fees' && allFees.length === 0) loadFees();
     };
 
     // Load badge counts on page load

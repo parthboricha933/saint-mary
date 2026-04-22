@@ -107,6 +107,15 @@ async function checkUserAuth(req) {
   return user;
 }
 
+// Check if user is admin OR approved principal
+async function checkAdminOrPrincipal(req) {
+  const isAdmin = await checkAdminAuth(req);
+  if (isAdmin) return { role: 'admin' };
+  const user = await checkUserAuth(req);
+  if (user && user.role === 'principal' && user.status === 'approved') return user;
+  return null;
+}
+
 const pageMap = {
   '/': 'index.html',
   '/login': 'login.html',
@@ -266,8 +275,8 @@ apiRoutes['GET /api/events'] = async (req, res) => {
 
 apiRoutes['POST /api/events'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const event = await p.event.create({ data: body });
@@ -290,8 +299,8 @@ apiRoutes['GET /api/events/{id}'] = async (req, res, params) => {
 
 apiRoutes['PUT /api/events/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const event = await p.event.update({ where: { id: params.id }, data: body });
@@ -303,8 +312,8 @@ apiRoutes['PUT /api/events/{id}'] = async (req, res, params) => {
 
 apiRoutes['DELETE /api/events/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     await p.event.delete({ where: { id: params.id } });
     json(res, { success: true });
@@ -326,8 +335,8 @@ apiRoutes['GET /api/notifications'] = async (req, res) => {
 
 apiRoutes['POST /api/notifications'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const notification = await p.notification.create({ data: body });
@@ -350,8 +359,8 @@ apiRoutes['GET /api/notifications/{id}'] = async (req, res, params) => {
 
 apiRoutes['PUT /api/notifications/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const notification = await p.notification.update({ where: { id: params.id }, data: body });
@@ -363,8 +372,8 @@ apiRoutes['PUT /api/notifications/{id}'] = async (req, res, params) => {
 
 apiRoutes['DELETE /api/notifications/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     await p.notification.delete({ where: { id: params.id } });
     json(res, { success: true });
@@ -386,8 +395,8 @@ apiRoutes['GET /api/syllabus'] = async (req, res) => {
 
 apiRoutes['POST /api/syllabus'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const item = await p.syllabus.create({ data: body });
@@ -410,8 +419,8 @@ apiRoutes['GET /api/syllabus/{id}'] = async (req, res, params) => {
 
 apiRoutes['PUT /api/syllabus/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const item = await p.syllabus.update({ where: { id: params.id }, data: body });
@@ -423,8 +432,8 @@ apiRoutes['PUT /api/syllabus/{id}'] = async (req, res, params) => {
 
 apiRoutes['DELETE /api/syllabus/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     await p.syllabus.delete({ where: { id: params.id } });
     json(res, { success: true });
@@ -446,8 +455,8 @@ apiRoutes['GET /api/fee-structure'] = async (req, res) => {
 
 apiRoutes['POST /api/fee-structure'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const fee = await p.feeStructure.create({ data: body });
@@ -470,8 +479,8 @@ apiRoutes['GET /api/fee-structure/{id}'] = async (req, res, params) => {
 
 apiRoutes['PUT /api/fee-structure/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const fee = await p.feeStructure.update({ where: { id: params.id }, data: body });
@@ -483,8 +492,8 @@ apiRoutes['PUT /api/fee-structure/{id}'] = async (req, res, params) => {
 
 apiRoutes['DELETE /api/fee-structure/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     await p.feeStructure.delete({ where: { id: params.id } });
     json(res, { success: true });
@@ -506,8 +515,8 @@ apiRoutes['GET /api/gallery'] = async (req, res) => {
 
 apiRoutes['POST /api/gallery'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const image = await p.galleryImage.create({ data: body });
@@ -530,8 +539,8 @@ apiRoutes['GET /api/gallery/{id}'] = async (req, res, params) => {
 
 apiRoutes['PUT /api/gallery/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const image = await p.galleryImage.update({ where: { id: params.id }, data: body });
@@ -543,8 +552,8 @@ apiRoutes['PUT /api/gallery/{id}'] = async (req, res, params) => {
 
 apiRoutes['DELETE /api/gallery/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     await p.galleryImage.delete({ where: { id: params.id } });
     json(res, { success: true });
@@ -713,6 +722,41 @@ function matchApiRoute(method, url) {
 }
 
 // ============ HTTP SERVER ============
+// --- IMAGE UPLOAD (base64) ---
+apiRoutes['POST /api/upload'] = async (req, res) => {
+  try {
+    const auth = await checkAdminOrPrincipal(req);
+    if (!auth) return json(res, { error: 'Unauthorized' }, 401);
+    const body = JSON.parse(await readBody(req));
+    const { imageData, folder } = body;
+    if (!imageData) return json(res, { error: 'No image data provided' }, 400);
+    
+    // Parse base64
+    const matches = imageData.match(/^data:(.+?);base64,(.+)$/);
+    if (!matches) return json(res, { error: 'Invalid image data format' }, 400);
+    
+    const mimeType = matches[1];
+    const base64Data = matches[2];
+    const extMap = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/gif': '.gif', 'image/webp': '.webp' };
+    const ext = extMap[mimeType] || '.jpg';
+    
+    const uploadDir = path.join(__dirname, 'public', 'uploads', folder || 'gallery');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    const filename = Date.now() + '-' + Math.random().toString(36).substr(2, 9) + ext;
+    const filePath = path.join(uploadDir, filename);
+    fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+    
+    const urlPath = '/uploads/' + (folder || 'gallery') + '/' + filename;
+    json(res, { success: true, url: urlPath, filename }, 201);
+  } catch (e) {
+    console.error('Upload error:', e);
+    json(res, { error: 'Upload failed' }, 500);
+  }
+};
+
 const publicDir = path.join(__dirname, 'public');
 
 const server = http.createServer(async (req, res) => {
