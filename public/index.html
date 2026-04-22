@@ -281,14 +281,50 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ========== SCROLL ANIMATIONS ========== */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .scroll-animate.slide-left {
+            transform: translateX(-50px) translateY(0);
+        }
+        .scroll-animate.slide-left.visible {
+            transform: translateX(0) translateY(0);
+        }
+        .scroll-animate.slide-right {
+            transform: translateX(50px) translateY(0);
+        }
+        .scroll-animate.slide-right.visible {
+            transform: translateX(0) translateY(0);
+        }
+        .scroll-animate.scale-up {
+            transform: scale(0.85) translateY(0);
+        }
+        .scroll-animate.scale-up.visible {
+            transform: scale(1) translateY(0);
+        }
+        .scroll-animate.delay-1 { transition-delay: 0.1s; }
+        .scroll-animate.delay-2 { transition-delay: 0.2s; }
+        .scroll-animate.delay-3 { transition-delay: 0.3s; }
+        .scroll-animate.delay-4 { transition-delay: 0.4s; }
+        .scroll-animate.delay-5 { transition-delay: 0.5s; }
+        .scroll-animate.delay-6 { transition-delay: 0.6s; }
+
         /* ========== HERO SECTION ========== */
         .hero {
             background: url('uploads/hero-photo.jpg') center center / cover no-repeat;
-            padding: 80px 24px 60px;
+            background-attachment: fixed;
+            padding: 100px 24px 80px;
             text-align: center;
             position: relative;
             overflow: hidden;
-            min-height: 420px;
+            min-height: 520px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -301,7 +337,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(6,95,70,0.82) 0%, rgba(4,120,87,0.78) 30%, rgba(5,150,105,0.72) 60%, rgba(16,185,129,0.65) 100%);
+            background: linear-gradient(to bottom, rgba(6,95,70,0.35) 0%, rgba(4,120,87,0.45) 50%, rgba(6,95,70,0.6) 100%);
             z-index: 0;
         }
 
@@ -312,8 +348,8 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 50%, rgba(255,255,255,0.03) 0%, transparent 50%);
+            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.04) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(255,255,255,0.02) 0%, transparent 50%);
             animation: heroFloat 20s ease-in-out infinite;
             z-index: 0;
         }
@@ -328,6 +364,20 @@
             z-index: 1;
             max-width: 800px;
             margin: 0 auto;
+        }
+
+        .hero-content > * {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: heroContentIn 0.8s ease forwards;
+        }
+        .hero-content > *:nth-child(1) { animation-delay: 0.2s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.4s; }
+        .hero-content > *:nth-child(3) { animation-delay: 0.6s; }
+        .hero-content > *:nth-child(4) { animation-delay: 0.8s; }
+
+        @keyframes heroContentIn {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-badge {
@@ -345,11 +395,12 @@
         }
 
         .hero h1 {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 800;
             color: #ffffff;
             margin-bottom: 8px;
             line-height: 1.15;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
         }
 
         .hero h1 span {
@@ -357,10 +408,11 @@
         }
 
         .hero .tagline {
-            font-size: 20px;
-            color: rgba(255,255,255,0.85);
+            font-size: 22px;
+            color: rgba(255,255,255,0.95);
             margin-bottom: 30px;
             font-weight: 300;
+            text-shadow: 0 1px 10px rgba(0,0,0,0.2);
         }
 
         .hero .admissions-pill {
@@ -414,7 +466,7 @@
             padding: 24px 16px;
             text-align: center;
             border-right: 1px solid #e5e7eb;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
         }
 
         .stat-box:last-child {
@@ -423,11 +475,18 @@
 
         .stat-box:hover {
             background: #ecfdf5;
+            transform: scale(1.05);
         }
 
         .stat-box .stat-icon {
             font-size: 28px;
             margin-bottom: 8px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover .stat-icon {
+            transform: scale(1.2) rotate(5deg);
         }
 
         .stat-box .stat-number {
@@ -544,13 +603,13 @@
             text-align: center;
             border: 1px solid #e5e7eb;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
 
         .quick-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(6, 95, 70, 0.12);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(6, 95, 70, 0.15);
             border-color: #a7f3d0;
         }
 
@@ -1321,16 +1380,18 @@
                 display: flex;
             }
 
+            .hero {
+                background-attachment: scroll;
+                min-height: 400px;
+                padding: 70px 20px 60px;
+            }
+
             .hero h1 {
                 font-size: 28px;
             }
 
             .hero .tagline {
                 font-size: 16px;
-            }
-
-            .hero {
-                padding: 50px 16px 40px;
             }
 
             .stats-row {
@@ -1504,22 +1565,22 @@
 
             <!-- Stats Row -->
             <div class="stats-row">
-                <div class="stat-box">
+                <div class="stat-box scroll-animate delay-1">
                     <div class="stat-icon">&#127891;</div>
-                    <div class="stat-number">14+</div>
+                    <div class="stat-number" data-count="14">0</div>
                     <div class="stat-label">Years of Excellence</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box scroll-animate delay-2">
                     <div class="stat-icon">&#128101;</div>
-                    <div class="stat-number">500+</div>
+                    <div class="stat-number" data-count="500">0</div>
                     <div class="stat-label">Students</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box scroll-animate delay-3">
                     <div class="stat-icon">&#127979;</div>
-                    <div class="stat-number">25+</div>
+                    <div class="stat-number" data-count="25">0</div>
                     <div class="stat-label">Dedicated Teachers</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box scroll-animate delay-4">
                     <div class="stat-icon">&#128214;</div>
                     <div class="stat-number">1-5</div>
                     <div class="stat-label">Classes Offered</div>
@@ -1528,11 +1589,11 @@
 
             <!-- At a Glance -->
             <div class="glance-section">
-                <div class="section-heading">
+                <div class="section-heading scroll-animate">
                     <h2>School At a Glance</h2>
                     <div class="heading-line"></div>
                 </div>
-                <div class="glance-card">
+                <div class="glance-card scroll-animate scale-up">
                     <div class="glance-grid">
                         <div class="glance-item">
                             <div class="glance-icon">&#127979;</div>
@@ -1582,38 +1643,38 @@
 
             <!-- Quick Navigation -->
             <div class="quick-nav-section">
-                <div class="section-heading">
+                <div class="section-heading scroll-animate">
                     <h2>Quick Navigation</h2>
                     <p>Explore our school at a glance</p>
                     <div class="heading-line"></div>
                 </div>
                 <div class="quick-nav-grid">
-                    <div class="quick-card" onclick="navigateTo('admissions')">
+                    <div class="quick-card scroll-animate delay-1" onclick="navigateTo('admissions')">
                         <div class="card-icon">&#128221;</div>
                         <h3>Admissions</h3>
                         <p>Apply for the 2025-26 academic session. Enroll your child today.</p>
                     </div>
-                    <div class="quick-card" onclick="navigateTo('events')">
+                    <div class="quick-card scroll-animate delay-2" onclick="navigateTo('events')">
                         <div class="card-icon">&#127881;</div>
                         <h3>Events</h3>
                         <p>Upcoming school events, celebrations, and activities.</p>
                     </div>
-                    <div class="quick-card" onclick="navigateTo('fees')">
+                    <div class="quick-card scroll-animate delay-3" onclick="navigateTo('fees')">
                         <div class="card-icon">&#128176;</div>
                         <h3>Fee Structure</h3>
                         <p>Complete fee details for all classes from 1 to 5.</p>
                     </div>
-                    <div class="quick-card" onclick="navigateTo('syllabus')">
+                    <div class="quick-card scroll-animate delay-4" onclick="navigateTo('syllabus')">
                         <div class="card-icon">&#128218;</div>
                         <h3>Syllabus</h3>
                         <p>Academic curriculum and subject details for each class.</p>
                     </div>
-                    <div class="quick-card" onclick="navigateTo('notices')">
+                    <div class="quick-card scroll-animate delay-5" onclick="navigateTo('notices')">
                         <div class="card-icon">&#128227;</div>
                         <h3>Notices</h3>
                         <p>Latest announcements, notifications, and circulars.</p>
                     </div>
-                    <div class="quick-card" onclick="navigateTo('contact')">
+                    <div class="quick-card scroll-animate delay-6" onclick="navigateTo('contact')">
                         <div class="card-icon">&#128222;</div>
                         <h3>Contact Us</h3>
                         <p>Get in touch with us for any queries or information.</p>
@@ -2400,6 +2461,104 @@
             div.appendChild(document.createTextNode(str));
             return div.innerHTML;
         }
+
+        // ===== SCROLL ANIMATIONS =====
+        function initScrollAnimations() {
+            var elements = document.querySelectorAll('.scroll-animate');
+            if (!elements.length) return;
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Trigger counter animation for stat numbers
+                        var counter = entry.target.querySelector('[data-count]');
+                        if (counter && !counter.dataset.animated) {
+                            counter.dataset.animated = 'true';
+                            animateCounter(counter);
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+            elements.forEach(function(el) { observer.observe(el); });
+        }
+
+        function animateCounter(el) {
+            var target = parseInt(el.dataset.count);
+            if (isNaN(target)) return;
+            var duration = 1500;
+            var startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                var progress = Math.min((timestamp - startTime) / duration, 1);
+                // Ease out cubic
+                var eased = 1 - Math.pow(1 - progress, 3);
+                var current = Math.floor(eased * target);
+                el.textContent = current + '+';
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = target + '+';
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Navbar scroll effect
+        function initNavbarScroll() {
+            var navbar = document.querySelector('.navbar');
+            if (!navbar) return;
+            var scrolled = false;
+
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 60 && !scrolled) {
+                    navbar.style.background = 'rgba(255,255,255,0.97)';
+                    navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+                    navbar.style.backdropFilter = 'blur(10px)';
+                    scrolled = true;
+                } else if (window.scrollY <= 60 && scrolled) {
+                    navbar.style.background = '#ffffff';
+                    navbar.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+                    navbar.style.backdropFilter = 'none';
+                    scrolled = false;
+                }
+            });
+        }
+
+        // Parallax effect on hero
+        function initParallax() {
+            var hero = document.querySelector('.hero');
+            if (!hero) return;
+
+            window.addEventListener('scroll', function() {
+                var scrolled = window.scrollY;
+                if (scrolled < hero.offsetHeight + 200) {
+                    hero.style.backgroundPositionY = (scrolled * 0.4) + 'px';
+                }
+            });
+        }
+
+        // Initialize all effects
+        window.addEventListener('DOMContentLoaded', function() {
+            initScrollAnimations();
+            initNavbarScroll();
+            initParallax();
+        });
+
+        // Re-init scroll animations when navigating to home
+        var origNavigateTo = navigateTo;
+        navigateTo = function(sectionId) {
+            origNavigateTo(sectionId);
+            if (sectionId === 'home') {
+                setTimeout(function() {
+                    initScrollAnimations();
+                    initParallax();
+                }, 100);
+            }
+        };
     </script>
 
 </body>
