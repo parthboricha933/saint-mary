@@ -689,8 +689,11 @@ function matchApiRoute(method, url) {
   if (apiRoutes[exactKey]) return { handler: apiRoutes[exactKey], params: {} };
   // Pattern match with {id}
   for (const key of Object.keys(apiRoutes)) {
-    const [routeMethod, ...routeParts] = key.split(' ');
+    const spaceIdx = key.indexOf(' ');
+    const routeMethod = key.substring(0, spaceIdx);
+    const routePath = key.substring(spaceIdx + 1);
     if (routeMethod !== method) continue;
+    const routeParts = routePath.split('/').filter(Boolean);
     const urlParts = urlPath.split('/').filter(Boolean);
     if (urlParts.length !== routeParts.length) continue;
     const params = {};
