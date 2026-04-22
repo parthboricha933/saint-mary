@@ -1,0 +1,18 @@
+{
+  "name": "saint-mary-school",
+  "version": "1.0.0",
+  "description": "Saint Mary School, Rajula - School Management Website",
+  "private": true,
+  "scripts": {
+    "start": "NODE_OPTIONS=--max-old-space-size=768 node light-server.mjs",
+    "db:push": "npx prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0"
+  }
+}

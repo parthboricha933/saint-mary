@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,proxy-revalidate,max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Dashboard - Saint Mary School</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #1f2937;
+      background: #f9fafb;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* ===== LOADING SCREEN ===== */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      background: #f9fafb;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #d1fae5;
+      border-top-color: #059669;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 1.125rem;
+      color: #065f46;
+      font-weight: 500;
+      letter-spacing: 0.025em;
+    }
+
+    /* ===== NOT AUTHENTICATED SCREEN ===== */
+    #not-auth-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: #f9fafb;
+    }
+
+    .auth-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+    }
+
+    .auth-card h2 {
+      font-size: 1.5rem;
+      color: #065f46;
+      margin-bottom: 8px;
+    }
+
+    .auth-card p {
+      color: #6b7280;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .auth-card .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      background: #059669;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { background: #047857; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      background: #fff;
+      color: #065f46;
+      border: 2px solid #d1fae5;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover {
+      background: #ecfdf5;
+      border-color: #059669;
+    }
+
+    /* ===== DASHBOARD LAYOUT ===== */
+    #dashboard-screen {
+      display: none;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background: #065f46;
+      color: #fff;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .sidebar-brand {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .sidebar-brand span {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 0;
+    }
+
+    .sidebar-nav button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 20px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-align: left;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .sidebar-nav button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .sidebar-nav button.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-right: 3px solid #f59e0b;
+    }
+
+    .sidebar-nav button .tab-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    /* Sidebar overlay for mobile */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 999;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    /* Main content area */
+    .main-content {
+      margin-left: 250px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 28px;
+      height: 64px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #065f46;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .topbar-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #065f46;
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .topbar-user {
+      font-size: 0.9rem;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .topbar-logout {
+      padding: 8px 18px;
+      background: none;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .topbar-logout:hover {
+      background: #fef2f2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+
+    /* Content area */
+    .content-area {
+      flex: 1;
+      padding: 28px;
+    }
+
+    /* Tab panels */
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Tab header (refresh button area) */
+    .tab-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .tab-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #065f46;
+    }
+
+    .btn-refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #fff;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+    .btn-refresh:hover {
+      background: #f3f4f6;
+    }
+    .btn-refresh .refresh-icon {
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .btn-refresh.spinning .refresh-icon {
+      animation: spin 0.6s linear infinite;
+    }
+
+    /* ===== EVENTS TAB ===== */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .event-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      padding: 24px;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+    .event-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-date-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: #f59e0b;
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .event-card-body {
+      padding-top: 12px;
+    }
+
+    .event-card-body h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 8px;
+      padding-left: 2px;
+    }
+
+    .event-card-body .event-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .event-card-body .event-meta span {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .event-card-body .event-meta span strong {
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .event-card-body .event-desc {
+      font-size: 0.875rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    /* ===== NOTIFICATIONS TAB ===== */
+    .notif-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .notif-filter-btn {
+      padding: 7px 18px;
+      border-radius: 20px;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      color: #374151;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .notif-filter-btn:hover {
+      border-color: #059669;
+      color: #059669;
+    }
+    .notif-filter-btn.active {
+      background: #059669;
+      color: #fff;
+      border-color: #059669;
+    }
+
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .notif-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      padding: 18px 20px;
+      border-left: 4px solid #9ca3af;
+      transition: box-shadow 0.2s;
+    }
+    .notif-card:hover {
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.09);
+    }
+
+    .notif-card.cat-academic { border-left-color: #3b82f6; }
+    .notif-card.cat-events { border-left-color: #8b5cf6; }
+    .notif-card.cat-general { border-left-color: #9ca3af; }
+
+    .notif-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .notif-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .notif-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .notif-badge.academic { background: #dbeafe; color: #1d4ed8; }
+    .notif-badge.events { background: #ede9fe; color: #6d28d9; }
+    .notif-badge.general { background: #f3f4f6; color: #4b5563; }
+
+    .notif-important-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #fef2f2;
+      color: #dc2626;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .notif-content {
+      font-size: 0.875rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    /* ===== SYLLABUS TAB ===== */
+    .syllabus-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .accordion-group {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      background: #fff;
+      border: none;
+      width: 100%;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #065f46;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .accordion-header:hover {
+      background: #f0fdf4;
+    }
+
+    .accordion-arrow {
+      font-size: 0.85rem;
+      transition: transform 0.25s ease;
+      color: #059669;
+    }
+
+    .accordion-group.open .accordion-arrow {
+      transform: rotate(180deg);
+    }
+
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .accordion-body-inner {
+      padding: 0 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .subject-item {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 14px 18px;
+      border-left: 3px solid #059669;
+    }
+
+    .subject-item h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .subject-item p {
+      font-size: 0.85rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    /* ===== MANAGE TEACHERS TAB ===== */
+    .teachers-table-wrapper {
+      overflow-x: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .teachers-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .teachers-table thead th {
+      padding: 14px 18px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      background: #f9fafb;
+      border-bottom: 2px solid #e5e7eb;
+      white-space: nowrap;
+    }
+
+    .teachers-table tbody tr {
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.1s;
+    }
+    .teachers-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    .teachers-table tbody tr:hover {
+      background: #f0fdf4;
+    }
+
+    .teachers-table tbody td {
+      padding: 14px 18px;
+      color: #374151;
+      vertical-align: middle;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .role-badge.admin { background: #dbeafe; color: #1d4ed8; }
+    .role-badge.principal { background: #fce7f3; color: #be185d; }
+    .role-badge.teacher { background: #d1fae5; color: #065f46; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .status-badge.approved { background: #d1fae5; color: #065f46; }
+    .status-badge.pending { background: #fef3c7; color: #92400e; }
+    .status-badge.rejected { background: #fef2f2; color: #991b1b; }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-approve {
+      padding: 6px 14px;
+      background: #059669;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .btn-approve:hover { background: #047857; }
+
+    .btn-reject {
+      padding: 6px 14px;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .btn-reject:hover { background: #b91c1c; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #9ca3af;
+    }
+    .empty-state .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+    .empty-state p {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 767px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .content-area {
+        padding: 20px 16px;
+      }
+
+      .events-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .topbar-user {
+        display: none;
+      }
+
+      .teachers-table {
+        font-size: 0.8rem;
+      }
+
+      .teachers-table thead th,
+      .teachers-table tbody td {
+        padding: 10px 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 36px 24px;
+      }
+
+      .notif-filters {
+        gap: 6px;
+      }
+
+      .notif-filter-btn {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <!-- ===== NOT AUTHENTICATED SCREEN ===== -->
+  <div id="not-auth-screen">
+    <div class="auth-card">
+      <h2>Login Required</h2>
+      <p>You need to be signed in to access the dashboard. Please log in with your staff credentials.</p>
+      <div class="btn-group">
+        <a href="/login" class="btn-primary">Go to Login</a>
+        <a href="/" class="btn-secondary">Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD SCREEN ===== -->
+  <div id="dashboard-screen">
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          Saint Mary School
+          <span>Staff Portal</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <button class="active" data-tab="events">
+          <span class="tab-icon">&#128197;</span> Events
+        </button>
+        <button data-tab="notifications">
+          <span class="tab-icon">&#128276;</span> Notifications
+        </button>
+        <button data-tab="syllabus">
+          <span class="tab-icon">&#128218;</span> Syllabus
+        </button>
+        <button data-tab="teachers" id="teachersTabBtn" style="display:none;">
+          <span class="tab-icon">&#128101;</span> Manage Teachers
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <button class="hamburger" id="hamburgerBtn">&#9776;</button>
+        <span class="topbar-title" id="topbarTitle">Events</span>
+        <span class="topbar-spacer"></span>
+        <span class="topbar-user" id="topbarUser"></span>
+        <button class="topbar-logout" id="logoutBtn">Logout</button>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content-area">
+
+        <!-- Events Panel -->
+        <div class="tab-panel active" id="panel-events">
+          <div class="tab-header">
+            <h2>Events</h2>
+            <button class="btn-refresh" id="refreshEvents">
+              <span class="refresh-icon">&#8635;</span> Refresh
+            </button>
+          </div>
+          <div id="eventsContainer">
+            <div class="empty-state">
+              <div class="empty-icon">&#128197;</div>
+              <p>Loading events...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications Panel -->
+        <div class="tab-panel" id="panel-notifications">
+          <div class="tab-header">
+            <h2>Notifications</h2>
+            <button class="btn-refresh" id="refreshNotifications">
+              <span class="refresh-icon">&#8635;</span> Refresh
+            </button>
+          </div>
+          <div class="notif-filters" id="notifFilters">
+            <button class="notif-filter-btn active" data-filter="all">All</button>
+            <button class="notif-filter-btn" data-filter="academic">Academic</button>
+            <button class="notif-filter-btn" data-filter="events">Events</button>
+            <button class="notif-filter-btn" data-filter="general">General</button>
+          </div>
+          <div id="notificationsContainer">
+            <div class="empty-state">
+              <div class="empty-icon">&#128276;</div>
+              <p>Load notifications to get started</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Syllabus Panel -->
+        <div class="tab-panel" id="panel-syllabus">
+          <div class="tab-header">
+            <h2>Syllabus</h2>
+            <button class="btn-refresh" id="refreshSyllabus">
+              <span class="refresh-icon">&#8635;</span> Refresh
+            </button>
+          </div>
+          <div id="syllabusContainer">
+            <div class="empty-state">
+              <div class="empty-icon">&#128218;</div>
+              <p>Loading syllabus...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Teachers Panel -->
+        <div class="tab-panel" id="panel-teachers">
+          <div class="tab-header">
+            <h2>Manage Teachers</h2>
+            <button class="btn-refresh" id="refreshTeachers">
+              <span class="refresh-icon">&#8635;</span> Refresh
+            </button>
+          </div>
+          <div id="teachersContainer">
+            <div class="empty-state">
+              <div class="empty-icon">&#128101;</div>
+              <p>Loading users...</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =============================================================
+       Saint Mary School — Dashboard (vanilla JS)
+       ============================================================= */
+    (function () {
+      'use strict';
+
+      // ── State ──────────────────────────────────────────────────
+      var currentUser = null;
+      var currentTab = 'events';
+      var notificationsLoaded = false;
+      var notificationsData = [];
+      var activeNotifFilter = 'all';
+
+      // ── DOM refs ───────────────────────────────────────────────
+      var loadingScreen = document.getElementById('loading-screen');
+      var notAuthScreen = document.getElementById('not-auth-screen');
+      var dashboardScreen = document.getElementById('dashboard-screen');
+      var sidebar = document.getElementById('sidebar');
+      var sidebarOverlay = document.getElementById('sidebarOverlay');
+      var hamburgerBtn = document.getElementById('hamburgerBtn');
+      var sidebarNav = document.getElementById('sidebarNav');
+      var teachersTabBtn = document.getElementById('teachersTabBtn');
+      var topbarTitle = document.getElementById('topbarTitle');
+      var topbarUser = document.getElementById('topbarUser');
+      var logoutBtn = document.getElementById('logoutBtn');
+
+      var eventsContainer = document.getElementById('eventsContainer');
+      var notificationsContainer = document.getElementById('notificationsContainer');
+      var syllabusContainer = document.getElementById('syllabusContainer');
+      var teachersContainer = document.getElementById('teachersContainer');
+      var notifFilters = document.getElementById('notifFilters');
+
+      // ── Helpers ────────────────────────────────────────────────
+      function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+          var d = new Date(dateStr);
+          if (isNaN(d.getTime())) return dateStr;
+          var options = { year: 'numeric', month: 'short', day: 'numeric' };
+          return d.toLocaleDateString('en-US', options);
+        } catch (e) {
+          return dateStr;
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      function showScreen(screen) {
+        loadingScreen.style.display = 'none';
+        notAuthScreen.style.display = 'none';
+        dashboardScreen.style.display = 'none';
+        if (screen === 'loading') loadingScreen.style.display = 'flex';
+        else if (screen === 'notauth') notAuthScreen.style.display = 'flex';
+        else if (screen === 'dashboard') dashboardScreen.style.display = 'block';
+      }
+
+      function toggleSidebar(open) {
+        if (open === undefined) open = !sidebar.classList.contains('open');
+        sidebar.classList.toggle('open', open);
+        sidebarOverlay.classList.toggle('active', open);
+      }
+
+      // ── Auth Check ─────────────────────────────────────────────
+      function checkAuth() {
+        showScreen('loading');
+        fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Not authenticated');
+          return res.json();
+        })
+        .then(function (user) {
+          currentUser = user;
+
+          // Admin redirect
+          if (user.role === 'admin') {
+            window.location.href = '/admin';
+            return;
+          }
+
+          // Setup dashboard
+          initDashboard();
+          showScreen('dashboard');
+        })
+        .catch(function () {
+          showScreen('notauth');
+        });
+      }
+
+      // ── Init Dashboard ─────────────────────────────────────────
+      function initDashboard() {
+        // User greeting
+        topbarUser.textContent = 'Hello, ' + (currentUser.name || currentUser.email || 'User');
+
+        // Show Manage Teachers for principals
+        if (currentUser.role === 'principal') {
+          teachersTabBtn.style.display = 'flex';
+        }
+
+        // Load events on init
+        loadEvents();
+
+        // Tab name map
+        var tabTitles = {
+          events: 'Events',
+          notifications: 'Notifications',
+          syllabus: 'Syllabus',
+          teachers: 'Manage Teachers'
+        };
+
+        // ── Sidebar tab switching ─────────────────────────────
+        sidebarNav.addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-tab]');
+          if (!btn) return;
+
+          var tab = btn.getAttribute('data-tab');
+          switchTab(tab);
+          toggleSidebar(false);
+        });
+
+        function switchTab(tab) {
+          currentTab = tab;
+
+          // Update sidebar buttons
+          var btns = sidebarNav.querySelectorAll('[data-tab]');
+          btns.forEach(function (b) { b.classList.remove('active'); });
+          var activeBtn = sidebarNav.querySelector('[data-tab="' + tab + '"]');
+          if (activeBtn) activeBtn.classList.add('active');
+
+          // Update panels
+          var panels = document.querySelectorAll('.tab-panel');
+          panels.forEach(function (p) { p.classList.remove('active'); });
+          var panel = document.getElementById('panel-' + tab);
+          if (panel) panel.classList.add('active');
+
+          // Update topbar title
+          topbarTitle.textContent = tabTitles[tab] || tab;
+
+          // Lazy-load notifications on first visit
+          if (tab === 'notifications' && !notificationsLoaded) {
+            loadNotifications();
+          }
+
+          // Lazy-load teachers on first visit
+          if (tab === 'teachers') {
+            var tc = teachersContainer.querySelector('.empty-state p');
+            if (tc && tc.textContent === 'Loading users...') {
+              loadTeachers();
+            }
+          }
+        }
+
+        // ── Hamburger ─────────────────────────────────────────
+        hamburgerBtn.addEventListener('click', function () {
+          toggleSidebar();
+        });
+
+        sidebarOverlay.addEventListener('click', function () {
+          toggleSidebar(false);
+        });
+
+        // ── Logout ────────────────────────────────────────────
+        logoutBtn.addEventListener('click', function () {
+          fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+          }).finally(function () {
+            window.location.href = '/login';
+          });
+        });
+
+        // ── Refresh buttons ───────────────────────────────────
+        document.getElementById('refreshEvents').addEventListener('click', function () {
+          loadEvents();
+        });
+
+        document.getElementById('refreshNotifications').addEventListener('click', function () {
+          loadNotifications();
+        });
+
+        document.getElementById('refreshSyllabus').addEventListener('click', function () {
+          loadSyllabus();
+        });
+
+        document.getElementById('refreshTeachers').addEventListener('click', function () {
+          loadTeachers();
+        });
+
+        // ── Notification filters ──────────────────────────────
+        notifFilters.addEventListener('click', function (e) {
+          var btn = e.target.closest('.notif-filter-btn');
+          if (!btn) return;
+
+          activeNotifFilter = btn.getAttribute('data-filter');
+          notifFilters.querySelectorAll('.notif-filter-btn').forEach(function (b) {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+          renderNotifications();
+        });
+
+        // ── Load Syllabus on init ─────────────────────────────
+        loadSyllabus();
+      }
+
+      // ── Events ─────────────────────────────────────────────────
+      function loadEvents() {
+        var refreshBtn = document.getElementById('refreshEvents');
+        refreshBtn.classList.add('spinning');
+
+        fetch('/api/events', {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load events');
+          return res.json();
+        })
+        .then(function (data) {
+          renderEvents(data);
+        })
+        .catch(function () {
+          eventsContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Failed to load events</p>' +
+            '</div>';
+        })
+        .finally(function () {
+          refreshBtn.classList.remove('spinning');
+        });
+      }
+
+      function renderEvents(events) {
+        if (!events || events.length === 0) {
+          eventsContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#128197;</div>' +
+            '  <p>No events found</p>' +
+            '</div>';
+          return;
+        }
+
+        var html = '<div class="events-grid">';
+        events.forEach(function (ev) {
+          var dateStr = formatDate(ev.date);
+          var timeStr = ev.time ? escapeHtml(ev.time) : '';
+          var venue = ev.venue ? escapeHtml(ev.venue) : '';
+          var desc = ev.description ? escapeHtml(ev.description) : '';
+          var title = escapeHtml(ev.title || ev.name || 'Untitled Event');
+
+          html += '<div class="event-card">';
+          if (dateStr) {
+            html += '<div class="event-date-badge">' + dateStr + '</div>';
+          }
+          html += '<div class="event-card-body">';
+          html += '<h3>' + title + '</h3>';
+          html += '<div class="event-meta">';
+          if (timeStr) {
+            html += '<span><strong>Time:</strong> ' + timeStr + '</span>';
+          }
+          if (venue) {
+            html += '<span><strong>Venue:</strong> ' + venue + '</span>';
+          }
+          html += '</div>';
+          if (desc) {
+            html += '<div class="event-desc">' + desc + '</div>';
+          }
+          html += '</div></div>';
+        });
+        html += '</div>';
+
+        eventsContainer.innerHTML = html;
+      }
+
+      // ── Notifications ──────────────────────────────────────────
+      function loadNotifications() {
+        var refreshBtn = document.getElementById('refreshNotifications');
+        refreshBtn.classList.add('spinning');
+
+        fetch('/api/notifications', {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load notifications');
+          return res.json();
+        })
+        .then(function (data) {
+          notificationsLoaded = true;
+          notificationsData = Array.isArray(data) ? data : (data.notifications || data.data || []);
+          renderNotifications();
+        })
+        .catch(function () {
+          notificationsContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Failed to load notifications</p>' +
+            '</div>';
+        })
+        .finally(function () {
+          refreshBtn.classList.remove('spinning');
+        });
+      }
+
+      function renderNotifications() {
+        var filtered = notificationsData;
+        if (activeNotifFilter !== 'all') {
+          filtered = notificationsData.filter(function (n) {
+            var cat = (n.category || 'general').toLowerCase();
+            return cat === activeNotifFilter;
+          });
+        }
+
+        if (!filtered || filtered.length === 0) {
+          notificationsContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#128276;</div>' +
+            '  <p>No notifications found</p>' +
+            '</div>';
+          return;
+        }
+
+        var html = '<div class="notif-list">';
+        filtered.forEach(function (n) {
+          var title = escapeHtml(n.title || 'Untitled');
+          var content = escapeHtml(n.content || n.message || n.body || '');
+          var category = (n.category || 'general').toLowerCase();
+          var isImportant = n.isImportant || n.important || false;
+
+          html += '<div class="notif-card cat-' + category + '">';
+          html += '<div class="notif-card-header">';
+          html += '<span class="notif-card-title">' + title + '</span>';
+          html += '<span class="notif-badge ' + category + '">' + category + '</span>';
+          if (isImportant) {
+            html += '<span class="notif-important-badge">Important</span>';
+          }
+          html += '</div>';
+          if (content) {
+            html += '<div class="notif-content">' + content + '</div>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+
+        notificationsContainer.innerHTML = html;
+      }
+
+      // ── Syllabus ───────────────────────────────────────────────
+      function loadSyllabus() {
+        var refreshBtn = document.getElementById('refreshSyllabus');
+        refreshBtn.classList.add('spinning');
+
+        fetch('/api/syllabus', {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load syllabus');
+          return res.json();
+        })
+        .then(function (data) {
+          renderSyllabus(data);
+        })
+        .catch(function () {
+          syllabusContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Failed to load syllabus</p>' +
+            '</div>';
+        })
+        .finally(function () {
+          refreshBtn.classList.remove('spinning');
+        });
+      }
+
+      function renderSyllabus(data) {
+        var syllabus = Array.isArray(data) ? data : (data.syllabus || data.data || []);
+
+        if (!syllabus || syllabus.length === 0) {
+          syllabusContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#128218;</div>' +
+            '  <p>No syllabus data available</p>' +
+            '</div>';
+          return;
+        }
+
+        // Group by className
+        var grouped = {};
+        syllabus.forEach(function (item) {
+          var cls = item.className || item.class || 'Uncategorized';
+          if (!grouped[cls]) grouped[cls] = [];
+          grouped[cls].push(item);
+        });
+
+        var classNames = Object.keys(grouped).sort();
+
+        var html = '<div class="syllabus-accordion">';
+        classNames.forEach(function (cls) {
+          html += '<div class="accordion-group">';
+          html += '<button class="accordion-header">';
+          html += '<span>' + escapeHtml(cls) + '</span>';
+          html += '<span class="accordion-arrow">&#9660;</span>';
+          html += '</button>';
+          html += '<div class="accordion-body">';
+          html += '<div class="accordion-body-inner">';
+          grouped[cls].forEach(function (subj) {
+            var subjectName = escapeHtml(subj.subjectName || subj.subject || subj.name || 'Subject');
+            var desc = escapeHtml(subj.description || subj.desc || '');
+            html += '<div class="subject-item">';
+            html += '<h4>' + subjectName + '</h4>';
+            if (desc) {
+              html += '<p>' + desc + '</p>';
+            }
+            html += '</div>';
+          });
+          html += '</div></div></div>';
+        });
+        html += '</div>';
+
+        syllabusContainer.innerHTML = html;
+
+        // Accordion toggle
+        syllabusContainer.querySelectorAll('.accordion-header').forEach(function (header) {
+          header.addEventListener('click', function () {
+            var group = header.parentElement;
+            var body = group.querySelector('.accordion-body');
+            var inner = body.querySelector('.accordion-body-inner');
+            var isOpen = group.classList.contains('open');
+
+            if (isOpen) {
+              body.style.maxHeight = '0px';
+              group.classList.remove('open');
+            } else {
+              body.style.maxHeight = inner.scrollHeight + 20 + 'px';
+              group.classList.add('open');
+            }
+          });
+        });
+      }
+
+      // ── Manage Teachers ────────────────────────────────────────
+      function loadTeachers() {
+        var refreshBtn = document.getElementById('refreshTeachers');
+        refreshBtn.classList.add('spinning');
+
+        fetch('/api/users', {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load users');
+          return res.json();
+        })
+        .then(function (data) {
+          renderTeachers(data);
+        })
+        .catch(function () {
+          teachersContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Failed to load users</p>' +
+            '</div>';
+        })
+        .finally(function () {
+          refreshBtn.classList.remove('spinning');
+        });
+      }
+
+      function renderTeachers(data) {
+        var users = Array.isArray(data) ? data : (data.users || data.data || []);
+
+        if (!users || users.length === 0) {
+          teachersContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#128101;</div>' +
+            '  <p>No users found</p>' +
+            '</div>';
+          return;
+        }
+
+        var html = '<div class="teachers-table-wrapper">';
+        html += '<table class="teachers-table">';
+        html += '<thead><tr>';
+        html += '<th>Name</th>';
+        html += '<th>Email</th>';
+        html += '<th>Role</th>';
+        html += '<th>Status</th>';
+        html += '<th>Actions</th>';
+        html += '</tr></thead>';
+        html += '<tbody>';
+
+        users.forEach(function (u) {
+          var name = escapeHtml(u.name || '-');
+          var email = escapeHtml(u.email || '-');
+          var role = (u.role || 'teacher').toLowerCase();
+          var status = (u.status || 'approved').toLowerCase();
+          var userId = u._id || u.id;
+
+          html += '<tr data-user-id="' + escapeHtml(userId) + '">';
+          html += '<td><strong>' + name + '</strong></td>';
+          html += '<td>' + email + '</td>';
+          html += '<td><span class="role-badge ' + role + '">' + role + '</span></td>';
+          html += '<td><span class="status-badge ' + status + '">' + status + '</span></td>';
+          html += '<td class="action-btns">';
+
+          if (status === 'pending') {
+            html += '<button class="btn-approve" data-action="approve" data-user-id="' + escapeHtml(userId) + '">Approve</button>';
+            html += '<button class="btn-reject" data-action="reject" data-user-id="' + escapeHtml(userId) + '">Reject</button>';
+          } else {
+            html += '<span style="color:#9ca3af;font-size:0.8rem;">&#10003; ' + status + '</span>';
+          }
+
+          html += '</td></tr>';
+        });
+
+        html += '</tbody></table></div>';
+
+        teachersContainer.innerHTML = html;
+
+        // Action buttons
+        teachersContainer.addEventListener('click', handleTeacherAction);
+      }
+
+      function handleTeacherAction(e) {
+        var btn = e.target.closest('[data-action]');
+        if (!btn) return;
+
+        var action = btn.getAttribute('data-action');
+        var userId = btn.getAttribute('data-user-id');
+        var row = btn.closest('tr');
+
+        // Disable buttons while processing
+        var actionBtns = row.querySelectorAll('.action-btns button');
+        actionBtns.forEach(function (b) {
+          b.disabled = true;
+          b.style.opacity = '0.5';
+        });
+
+        var payload;
+        if (action === 'approve') {
+          payload = JSON.stringify({
+            status: 'approved',
+            approvedBy: currentUser.id || currentUser._id
+          });
+        } else if (action === 'reject') {
+          payload = JSON.stringify({
+            status: 'rejected'
+          });
+        }
+
+        fetch('/api/users/' + userId, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: payload
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Action failed');
+          return res.json();
+        })
+        .then(function () {
+          // Reload teachers list
+          loadTeachers();
+        })
+        .catch(function (err) {
+          alert('Error: ' + err.message);
+          actionBtns.forEach(function (b) {
+            b.disabled = false;
+            b.style.opacity = '1';
+          });
+        });
+      }
+
+      // ── Boot ───────────────────────────────────────────────────
+      checkAuth();
+
+    })();
+  </script>
+
+</body>
+</html>

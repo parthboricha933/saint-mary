@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate,proxy-revalidate,max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Admin Panel - Saint Mary School</title>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        /* ======================== LOGIN SCREEN ======================== */
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #065f46 0%, #047857 40%, #059669 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .login-logo {
+            display: block;
+            margin: 0 auto 16px;
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: #f0fdf4;
+            padding: 8px;
+        }
+
+        .login-logo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #059669, #065f46);
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .login-card h1 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 4px;
+        }
+
+        .login-card .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1f2937;
+            background: #ffffff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #059669;
+            color: #ffffff;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background: #047857;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(5,150,105,0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 13px;
+            border-radius: 6px;
+        }
+
+        .btn-green {
+            background: #059669;
+            color: #ffffff;
+        }
+
+        .btn-green:hover {
+            background: #047857;
+        }
+
+        .btn-red {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-red:hover {
+            background: #b91c1c;
+        }
+
+        .btn-amber {
+            background: #f59e0b;
+            color: #ffffff;
+        }
+
+        .btn-amber:hover {
+            background: #d97706;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #d1d5db;
+            color: #374151;
+        }
+
+        .btn-outline:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .login-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* ======================== DASHBOARD ======================== */
+        #dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* Top Bar (Mobile) */
+        .topbar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #065f46;
+            color: #ffffff;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            line-height: 1;
+        }
+
+        .hamburger:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .topbar-title {
+            margin-left: 12px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: #065f46;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.75);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
+            border-right: 3px solid #f59e0b;
+        }
+
+        .sidebar-nav-item .nav-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(220,38,38,0.8);
+            border-color: rgba(220,38,38,0.8);
+        }
+
+        /* Sidebar overlay (mobile) */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stat Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card .stat-icon.green {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .stat-card .stat-icon.amber {
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .stat-card .stat-icon.blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .section-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+        }
+
+        .section-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #f0fdf4;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-role {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 6px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
+        .btn-delete {
+            background: none;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1;
+        }
+
+        .btn-delete:hover {
+            background: #fef2f2;
+            border-color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+        }
+
+        /* Create User Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-grid .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .modal .modal-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .modal h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-actions .btn {
+            min-width: 120px;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 14px 20px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            border-left: 4px solid;
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 280px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success {
+            border-color: #059669;
+            color: #065f46;
+        }
+
+        .toast.error {
+            border-color: #dc2626;
+            color: #991b1b;
+        }
+
+        .toast.info {
+            border-color: #2563eb;
+            color: #1e40af;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.8);
+            z-index: 2500;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #059669;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* ======================== RESPONSIVE ======================== */
+        @media (max-width: 768px) {
+            .topbar {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 72px 16px 32px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .form-group.full-width {
+                grid-column: 1;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .login-card {
+                padding: 32px 24px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-card .stat-value {
+                font-size: 26px;
+            }
+
+            .actions-cell {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading...</div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <div class="modal-icon">&#9888;&#65039;</div>
+        <h3>Are you sure?</h3>
+        <p>This action cannot be undone. The user account will be permanently deleted.</p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" id="cancelDeleteBtn">Cancel</button>
+            <button class="btn btn-red" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ======================== LOGIN SCREEN ======================== -->
+<div id="login-screen">
+    <div class="login-card">
+        <img src="uploads/school-logo.png" alt="Saint Mary School" class="login-logo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="login-logo-placeholder" style="display:none;">SM</div>
+        <h1>Admin Panel</h1>
+        <p class="subtitle">Saint Mary School &mdash; Management System</p>
+
+        <div class="login-error" id="loginError"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="loginEmail">Email Address</label>
+                <input type="email" id="loginEmail" value="admin@saintmaryschool.com" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="loginToken">Admin Token</label>
+                <input type="password" id="loginToken" placeholder="Enter your admin token" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary" id="loginBtn">
+                Sign In
+            </button>
+        </form>
+
+        <div class="login-footer">
+            Saint Mary School &copy; 2024
+        </div>
+    </div>
+</div>
+
+<!-- ======================== DASHBOARD ======================== -->
+<div id="dashboard">
+
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+        <button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
+        <span class="topbar-title">Admin Panel</span>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>&#127979; Saint Mary</h2>
+            <p>Admin Dashboard</p>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="sidebar-nav-item active" data-tab="overview" onclick="switchTab('overview', this)">
+                <span class="nav-icon">&#128202;</span> Overview
+            </button>
+            <button class="sidebar-nav-item" data-tab="manage-users" onclick="switchTab('manage-users', this)">
+                <span class="nav-icon">&#128101;</span> Manage Users
+            </button>
+            <button class="sidebar-nav-item" data-tab="create-user" onclick="switchTab('create-user', this)">
+                <span class="nav-icon">&#10010;</span> Create User
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-logout" onclick="handleLogout()">
+                <span>&#128682;</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ===== OVERVIEW TAB ===== -->
+        <div class="tab-content active" id="tab-overview">
+            <div class="page-header">
+                <h1>Overview</h1>
+                <p>Welcome back! Here's a summary of your school accounts.</p>
+            </div>
+
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon green">&#128218;</div>
+                    <div class="stat-value" id="statApprovedTeachers">--</div>
+                    <div class="stat-label">Approved Teachers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">&#127891;</div>
+                    <div class="stat-value" id="statApprovedPrincipals">--</div>
+                    <div class="stat-label">Approved Principals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon amber">&#8987;&#65039;</div>
+                    <div class="stat-value" id="statPending">--</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-green btn-sm" onclick="switchTab('manage-users', document.querySelector('[data-tab=manage-users]'))">
+                        &#128101; Go to Manage Users
+                    </button>
+                    <button class="btn btn-amber btn-sm" onclick="switchTab('create-user', document.querySelector('[data-tab=create-user]'))">
+                        &#10010; Create New User
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MANAGE USERS TAB ===== -->
+        <div class="tab-content" id="tab-manage-users">
+            <div class="page-header">
+                <h1>Manage Users</h1>
+                <p>View, approve, reject, or remove user accounts.</p>
+            </div>
+
+            <div class="section-card">
+                <div class="table-wrapper">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <div class="empty-icon">&#128100;</div>
+                                    <p>Loading users...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CREATE USER TAB ===== -->
+        <div class="tab-content" id="tab-create-user">
+            <div class="page-header">
+                <h1>Create User</h1>
+                <p>Register a new teacher or principal account.</p>
+            </div>
+
+            <div class="section-card">
+                <div class="success-message" id="createSuccess">
+                    &#9989; User created successfully!
+                </div>
+
+                <form id="createForm" onsubmit="handleCreateUser(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="createName">Full Name <span style="color:#dc2626;">*</span></label>
+                            <input type="text" id="createName" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="createEmail">Email Address <span style="color:#dc2626;">*</span></label>
+                            <input type="email" id="createEmail" placeholder="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="createPassword">Password <span style="color:#dc2626;">*</span></label>
+                            <input type="password" id="createPassword" placeholder="Minimum 6 characters" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="createRole">Role <span style="color:#dc2626;">*</span></label>
+                            <select id="createRole" required onchange="toggleSubjectField()">
+                                <option value="">Select a role</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="principal">Principal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="createPhone">Phone Number</label>
+                            <input type="tel" id="createPhone" placeholder="+1 (555) 000-0000">
+                        </div>
+                        <div class="form-group" id="subjectGroup" style="display:none;">
+                            <label for="createSubject">Subject <span style="color:#dc2626;">*</span></label>
+                            <input type="text" id="createSubject" placeholder="e.g. Mathematics">
+                        </div>
+                    </div>
+                    <div style="margin-top: 24px; display: flex; gap: 12px;">
+                        <button type="submit" class="btn btn-green" id="createBtn">
+                            &#10010; Create User
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="resetCreateForm()">
+                            Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    /* ============================================================
+       STATE
+    ============================================================ */
+    let allUsers = [];
+    let deleteTargetId = null;
+
+    /* ============================================================
+       INIT
+    ============================================================ */
+    document.addEventListener('DOMContentLoaded', function() {
+        checkSession();
+    });
+
+    /* ============================================================
+       AUTH
+    ============================================================ */
+    async function checkSession() {
+        try {
+            const res = await fetch('/api/auth/me', {
+                credentials: 'include'
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data && (data.role === 'admin' || data.isAdmin)) {
+                    showDashboard();
+                    return;
+                }
+            }
+        } catch (e) {
+            // not logged in, show login
+        }
+        showLogin();
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const token = document.getElementById('loginToken').value;
+        const errorBox = document.getElementById('loginError');
+        const loginBtn = document.getElementById('loginBtn');
+
+        errorBox.classList.remove('show');
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<span class="spinner"></span> Signing in...';
+
+        try {
+            const res = await fetch('/api/auth/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, token })
+            });
+
+            if (res.ok) {
+                showDashboard();
+            } else {
+                const data = await res.json().catch(() => ({}));
+                errorBox.textContent = data.message || data.error || 'Invalid credentials. Please try again.';
+                errorBox.classList.add('show');
+            }
+        } catch (err) {
+            errorBox.textContent = 'Network error. Please check your connection and try again.';
+            errorBox.classList.add('show');
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = 'Sign In';
+        }
+    }
+
+    async function handleLogout() {
+        try {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (e) {
+            // ignore
+        }
+        showLogin();
+    }
+
+    /* ============================================================
+       SCREENS
+    ============================================================ */
+    function showLogin() {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('loginError').classList.remove('show');
+        document.getElementById('loginToken').value = '';
+    }
+
+    function showDashboard() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadUsers();
+    }
+
+    /* ============================================================
+       SIDEBAR & TABS
+    ============================================================ */
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    }
+
+    function switchTab(tabId, navItem) {
+        // Update nav items
+        document.querySelectorAll('.sidebar-nav-item').forEach(function(item) {
+            item.classList.remove('active');
+        });
+        if (navItem) navItem.classList.add('active');
+
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+        var tabEl = document.getElementById('tab-' + tabId);
+        if (tabEl) tabEl.classList.add('active');
+
+        // Close mobile sidebar
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+
+        // Refresh data on tab switch
+        if (tabId === 'manage-users' || tabId === 'overview') {
+            loadUsers();
+        }
+    }
+
+    /* ============================================================
+       DATA
+    ============================================================ */
+    async function loadUsers() {
+        showLoading();
+        try {
+            const res = await fetch('/api/users', {
+                credentials: 'include'
+            });
+            if (res.ok) {
+                const data = await res.json();
+                // Handle both array response and { users: [...] } response
+                allUsers = Array.isArray(data) ? data : (data.users || data.data || []);
+                updateStats();
+                renderUsersTable();
+            } else {
+                showToast('Failed to load users.', 'error');
+            }
+        } catch (err) {
+            showToast('Network error while loading users.', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function updateStats() {
+        var approvedTeachers = allUsers.filter(function(u) {
+            return u.status === 'approved' && u.role === 'teacher';
+        }).length;
+
+        var approvedPrincipals = allUsers.filter(function(u) {
+            return u.status === 'approved' && u.role === 'principal';
+        }).length;
+
+        var pending = allUsers.filter(function(u) {
+            return u.status === 'pending';
+        }).length;
+
+        document.getElementById('statApprovedTeachers').textContent = approvedTeachers;
+        document.getElementById('statApprovedPrincipals').textContent = approvedPrincipals;
+        document.getElementById('statPending').textContent = pending;
+    }
+
+    function renderUsersTable() {
+        var tbody = document.getElementById('usersTableBody');
+
+        if (allUsers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">' +
+                '<div class="empty-icon">&#128100;</div>' +
+                '<p>No users found.</p></td></tr>';
+            return;
+        }
+
+        var html = '';
+        allUsers.forEach(function(user) {
+            var userId = user._id || user.id;
+            var name = user.name || 'N/A';
+            var email = user.email || 'N/A';
+            var role = (user.role || 'unknown').toLowerCase();
+            var status = (user.status || 'pending').toLowerCase();
+
+            // Role badge
+            var roleBadge = '<span class="badge badge-role">' + capitalize(role) + '</span>';
+
+            // Status badge
+            var statusBadge = '';
+            if (status === 'pending') {
+                statusBadge = '<span class="badge badge-pending">&#9203; Pending</span>';
+            } else if (status === 'approved') {
+                statusBadge = '<span class="badge badge-approved">&#9989; Approved</span>';
+            } else if (status === 'rejected') {
+                statusBadge = '<span class="badge badge-rejected">&#10060; Rejected</span>';
+            } else {
+                statusBadge = '<span class="badge">' + capitalize(status) + '</span>';
+            }
+
+            // Actions
+            var actions = '';
+            if (status === 'pending') {
+                actions =
+                    '<button class="btn btn-green btn-sm" onclick="approveUser(\'' + userId + '\')">&#9989; Approve</button>' +
+                    '<button class="btn btn-red btn-sm" onclick="rejectUser(\'' + userId + '\')">&#10060; Reject</button>';
+            } else if (status === 'approved') {
+                actions = '<span class="badge badge-active">&#9679; Active</span>';
+            } else if (status === 'rejected') {
+                actions = '<span class="badge badge-rejected">&#9679; Rejected</span>';
+            }
+
+            // Delete button for all users
+            actions += ' <button class="btn-delete" onclick="promptDelete(\'' + userId + '\')" title="Delete user">&#128465;&#65039;</button>';
+
+            html += '<tr>' +
+                '<td><strong>' + escapeHtml(name) + '</strong></td>' +
+                '<td>' + escapeHtml(email) + '</td>' +
+                '<td>' + roleBadge + '</td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td><div class="actions-cell">' + actions + '</div></td>' +
+                '</tr>';
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    /* ============================================================
+       USER ACTIONS
+    ============================================================ */
+    async function approveUser(id) {
+        showLoading();
+        try {
+            var res = await fetch('/api/users/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ status: 'approved', approvedBy: 'admin' })
+            });
+            if (res.ok) {
+                showToast('User approved successfully.', 'success');
+                loadUsers();
+            } else {
+                var data = await res.json().catch(function() { return {}; });
+                showToast(data.message || data.error || 'Failed to approve user.', 'error');
+            }
+        } catch (err) {
+            showToast('Network error.', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    async function rejectUser(id) {
+        showLoading();
+        try {
+            var res = await fetch('/api/users/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ status: 'rejected' })
+            });
+            if (res.ok) {
+                showToast('User rejected.', 'info');
+                loadUsers();
+            } else {
+                var data = await res.json().catch(function() { return {}; });
+                showToast(data.message || data.error || 'Failed to reject user.', 'error');
+            }
+        } catch (err) {
+            showToast('Network error.', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function promptDelete(id) {
+        deleteTargetId = id;
+        document.getElementById('deleteModal').classList.add('show');
+    }
+
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        document.getElementById('deleteModal').classList.remove('show');
+        deleteTargetId = null;
+    });
+
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('show');
+            deleteTargetId = null;
+        }
+    });
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        if (!deleteTargetId) return;
+        var id = deleteTargetId;
+        document.getElementById('deleteModal').classList.remove('show');
+        deleteTargetId = null;
+
+        showLoading();
+        try {
+            var res = await fetch('/api/users/' + id, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            if (res.ok) {
+                showToast('User deleted successfully.', 'success');
+                loadUsers();
+            } else {
+                var data = await res.json().catch(function() { return {}; });
+                showToast(data.message || data.error || 'Failed to delete user.', 'error');
+            }
+        } catch (err) {
+            showToast('Network error.', 'error');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    /* ============================================================
+       CREATE USER
+    ============================================================ */
+    function toggleSubjectField() {
+        var role = document.getElementById('createRole').value;
+        var subjectGroup = document.getElementById('subjectGroup');
+        var subjectInput = document.getElementById('createSubject');
+
+        if (role === 'teacher') {
+            subjectGroup.style.display = 'block';
+            subjectInput.required = true;
+        } else {
+            subjectGroup.style.display = 'none';
+            subjectInput.required = false;
+            subjectInput.value = '';
+        }
+    }
+
+    async function handleCreateUser(e) {
+        e.preventDefault();
+
+        var name = document.getElementById('createName').value.trim();
+        var email = document.getElementById('createEmail').value.trim();
+        var password = document.getElementById('createPassword').value;
+        var role = document.getElementById('createRole').value;
+        var phone = document.getElementById('createPhone').value.trim();
+        var subject = document.getElementById('createSubject').value.trim();
+
+        // Validation
+        if (!name || !email || !password || !role) {
+            showToast('Please fill in all required fields.', 'error');
+            return;
+        }
+
+        if (password.length < 6) {
+            showToast('Password must be at least 6 characters.', 'error');
+            return;
+        }
+
+        if (role === 'teacher' && !subject) {
+            showToast('Subject is required for teachers.', 'error');
+            return;
+        }
+
+        var createBtn = document.getElementById('createBtn');
+        createBtn.disabled = true;
+        createBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;border-color:rgba(255,255,255,0.3);"></span> Creating...';
+
+        var body = { name, email, password, role };
+        if (phone) body.phone = phone;
+        if (role === 'teacher' && subject) body.subject = subject;
+
+        try {
+            var res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(body)
+            });
+
+            if (res.ok) {
+                document.getElementById('createSuccess').classList.add('show');
+                showToast('User created successfully!', 'success');
+                resetCreateForm();
+                loadUsers(); // refresh manage users tab data
+                setTimeout(function() {
+                    document.getElementById('createSuccess').classList.remove('show');
+                }, 5000);
+            } else {
+                var data = await res.json().catch(function() { return {}; });
+                showToast(data.message || data.error || 'Failed to create user.', 'error');
+            }
+        } catch (err) {
+            showToast('Network error. Please try again.', 'error');
+        } finally {
+            createBtn.disabled = false;
+            createBtn.innerHTML = '&#10010; Create User';
+        }
+    }
+
+    function resetCreateForm() {
+        document.getElementById('createForm').reset();
+        document.getElementById('subjectGroup').style.display = 'none';
+        document.getElementById('createSubject').required = false;
+        document.getElementById('createSuccess').classList.remove('show');
+    }
+
+    /* ============================================================
+       UTILITIES
+    ============================================================ */
+    function capitalize(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(text));
+        return div.innerHTML;
+    }
+
+    function showToast(message, type) {
+        type = type || 'info';
+        var container = document.getElementById('toastContainer');
+        var toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(function() {
+            toast.style.transition = 'opacity 0.3s';
+            toast.style.opacity = '0';
+            setTimeout(function() {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 300);
+        }, 4000);
+    }
+
+    function showLoading() {
+        document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+        document.getElementById('loadingOverlay').classList.remove('show');
+    }
+</script>
+
+</body>
+</html>

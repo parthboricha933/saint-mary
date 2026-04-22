@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Saint Mary School, Rajula - English Medium School</title>
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #1f2937;
+            background: #f9fafb;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .navbar-brand .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #065f46, #059669);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f59e0b;
+            font-size: 20px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .navbar-brand .brand-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #065f46;
+            line-height: 1.2;
+        }
+
+        .navbar-brand .brand-sub {
+            font-size: 11px;
+            font-weight: 400;
+            color: #6b7280;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .navbar-nav a {
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            border-radius: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .navbar-nav a:hover,
+        .navbar-nav a.active {
+            color: #065f46;
+            background: #ecfdf5;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .btn-staff {
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #065f46;
+            border: 2px solid #065f46;
+            border-radius: 6px;
+            background: transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-staff:hover {
+            background: #065f46;
+            color: #fff;
+        }
+
+        .btn-admin {
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #92400e;
+            border: 2px solid #f59e0b;
+            border-radius: 6px;
+            background: transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-admin:hover {
+            background: #f59e0b;
+            color: #fff;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border: none;
+            background: none;
+            z-index: 1010;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2.5px;
+            background: #065f46;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            max-width: 85vw;
+            height: 100%;
+            background: #fff;
+            z-index: 1005;
+            transition: right 0.3s ease;
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .mobile-drawer.open {
+            right: 0;
+        }
+
+        .mobile-drawer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .mobile-drawer a:hover,
+        .mobile-drawer a.active {
+            color: #065f46;
+            background: #ecfdf5;
+        }
+
+        .mobile-drawer .drawer-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 8px 0;
+        }
+
+        .mobile-drawer .drawer-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 0 16px;
+        }
+
+        .mobile-drawer .drawer-actions a {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .mobile-drawer .drawer-btn-staff {
+            color: #065f46;
+            border: 2px solid #065f46;
+        }
+
+        .mobile-drawer .drawer-btn-admin {
+            color: #92400e;
+            border: 2px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            background: linear-gradient(135deg, #065f46 0%, #047857 30%, #059669 60%, #10b981 100%);
+            padding: 80px 24px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(255,255,255,0.03) 0%, transparent 50%);
+            animation: heroFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes heroFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            line-height: 1.15;
+        }
+
+        .hero h1 span {
+            color: #fcd34d;
+        }
+
+        .hero .tagline {
+            font-size: 20px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .hero .admissions-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 6px 25px rgba(245, 158, 11, 0.6); }
+        }
+
+        .hero .admissions-pill .dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ========== STATS ROW ========== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            max-width: 900px;
+            margin: -30px auto 0;
+            position: relative;
+            z-index: 2;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .stat-box {
+            padding: 24px 16px;
+            text-align: center;
+            border-right: 1px solid #e5e7eb;
+            transition: background 0.2s;
+        }
+
+        .stat-box:last-child {
+            border-right: none;
+        }
+
+        .stat-box:hover {
+            background: #ecfdf5;
+        }
+
+        .stat-box .stat-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .stat-box .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: #065f46;
+            line-height: 1;
+        }
+
+        .stat-box .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ========== GLANCE CARD ========== */
+        .glance-section {
+            max-width: 900px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .section-heading h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .section-heading p {
+            color: #6b7280;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .section-heading .heading-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #059669, #f59e0b);
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+
+        .glance-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            border: 1px solid #e5e7eb;
+        }
+
+        .glance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .glance-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f0fdf4;
+            border-radius: 10px;
+            border: 1px solid #d1fae5;
+        }
+
+        .glance-item .glance-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #065f46, #059669);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .glance-item .glance-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .glance-item .glance-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* ========== QUICK NAV SECTION ========== */
+        .quick-nav-section {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px 40px;
+        }
+
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .quick-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px 20px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .quick-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(6, 95, 70, 0.12);
+            border-color: #a7f3d0;
+        }
+
+        .quick-card .card-icon {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 14px;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .quick-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 6px;
+        }
+
+        .quick-card p {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* ========== COMMON SECTION STYLES ========== */
+        .section-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 60px;
+        }
+
+        .section-page-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .section-page-header h2 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .section-page-header p {
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .section-page-header .heading-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #059669, #f59e0b);
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+
+        /* ========== FORMS ========== */
+        .form-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1f2937;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group .error-msg {
+            font-size: 12px;
+            color: #ef4444;
+            display: none;
+        }
+
+        .form-group.has-error input,
+        .form-group.has-error select,
+        .form-group.has-error textarea {
+            border-color: #ef4444;
+        }
+
+        .form-group.has-error .error-msg {
+            display: block;
+        }
+
+        .btn-submit {
+            grid-column: 1 / -1;
+            padding: 14px;
+            background: linear-gradient(135deg, #065f46, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========== EVENT CARDS ========== */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .event-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: box-shadow 0.2s;
+            display: flex;
+            gap: 16px;
+        }
+
+        .event-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .event-date-badge {
+            flex-shrink: 0;
+            width: 64px;
+            background: linear-gradient(135deg, #065f46, #059669);
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .event-date-badge .day {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .event-date-badge .month {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .event-date-badge .year {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .event-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .event-info p {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #fff;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn:hover {
+            border-color: #059669;
+            color: #065f46;
+            background: #ecfdf5;
+        }
+
+        /* ========== TABLE ========== */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+        }
+
+        .fee-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .fee-table thead {
+            background: linear-gradient(135deg, #065f46, #047857);
+            color: #fff;
+        }
+
+        .fee-table th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .fee-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .fee-table tbody tr:nth-child(even) {
+            background: #f0fdf4;
+        }
+
+        .fee-table tbody tr:hover {
+            background: #ecfdf5;
+        }
+
+        .fee-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .fee-table .total-row {
+            font-weight: 700;
+            background: #ecfdf5 !important;
+            color: #065f46;
+        }
+
+        /* ========== ACCORDION ========== */
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .accordion-item {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            cursor: pointer;
+            background: #fff;
+            transition: background 0.2s;
+            border: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .accordion-header:hover {
+            background: #f0fdf4;
+        }
+
+        .accordion-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .accordion-arrow {
+            font-size: 18px;
+            color: #6b7280;
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.open .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-body-inner {
+            padding: 0 20px 16px;
+        }
+
+        .subject-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .subject-item:last-child {
+            border-bottom: none;
+        }
+
+        .subject-dot {
+            width: 8px;
+            height: 8px;
+            background: #059669;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .subject-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .subject-desc {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        /* ========== NOTICE CARDS ========== */
+        .notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .notice-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .notice-badge-wrap {
+            flex-shrink: 0;
+        }
+
+        .notice-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-important {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .badge-academic {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .badge-general {
+            background: #f0fdf4;
+            color: #059669;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge-event {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .badge-fee {
+            background: #faf5ff;
+            color: #7c3aed;
+            border: 1px solid #ddd6fe;
+        }
+
+        .notice-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .notice-content p {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+
+        .notice-date {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* ========== GALLERY GRID ========== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .gallery-card {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border-radius: 14px;
+            aspect-ratio: 4/3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #a7f3d0;
+            gap: 8px;
+            transition: all 0.25s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #065f46;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(6, 95, 70, 0.12);
+        }
+
+        .gallery-card .gallery-icon {
+            font-size: 36px;
+        }
+
+        .gallery-card .gallery-label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ========== CONTACT SECTION ========== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+        }
+
+        .contact-info-card {
+            background: linear-gradient(135deg, #065f46, #047857);
+            border-radius: 16px;
+            padding: 32px;
+            color: #fff;
+        }
+
+        .contact-info-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .contact-item .contact-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .contact-item .contact-label {
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-item .contact-value {
+            font-size: 15px;
+            font-weight: 500;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        .contact-item .contact-value a {
+            color: #fff;
+            transition: opacity 0.2s;
+        }
+
+        .contact-item .contact-value a:hover {
+            opacity: 0.8;
+        }
+
+        .contact-map-placeholder {
+            margin-top: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: #065f46;
+            color: rgba(255,255,255,0.8);
+            padding: 48px 24px 0;
+        }
+
+        .footer-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-col h4 {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .footer-col p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-col ul a {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            transition: color 0.2s;
+        }
+
+        .footer-col ul a:hover {
+            color: #fcd34d;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .footer-contact-item span:first-child {
+            flex-shrink: 0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ========== TOAST NOTIFICATIONS ========== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInToast 0.3s ease;
+            min-width: 280px;
+            max-width: 400px;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #065f46, #059669);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 0 0 10px;
+            line-height: 1;
+        }
+
+        .toast-close:hover {
+            color: #fff;
+        }
+
+        @keyframes slideInToast {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ========== LOADING SPINNER ========== */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border: 3px solid #d1fae5;
+            border-top-color: #059669;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .navbar-nav, .navbar-actions {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero .tagline {
+                font-size: 16px;
+            }
+
+            .hero {
+                padding: 50px 16px 40px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                margin: -20px 16px 0;
+                border-radius: 12px;
+            }
+
+            .stat-box {
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .stat-box:nth-child(2) {
+                border-right: none;
+            }
+
+            .quick-nav-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: 1;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .section-page {
+                padding: 24px 16px 40px;
+            }
+
+            .section-page-header h2 {
+                font-size: 24px;
+            }
+
+            .section-heading h2 {
+                font-size: 24px;
+            }
+
+            .toast-container {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .toast {
+                min-width: unset;
+                max-width: unset;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-box {
+                border-right: none;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero .admissions-pill {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <a class="navbar-brand" onclick="navigateTo('home')">
+            <div class="brand-icon">S</div>
+            <div>
+                <div class="brand-text">Saint Mary School</div>
+                <div class="brand-sub">Rajula, Amreli</div>
+            </div>
+        </a>
+
+        <div class="navbar-nav" id="desktopNav">
+            <a href="#home" onclick="navigateTo('home')" class="active" data-nav="home">Home</a>
+            <a href="#admissions" onclick="navigateTo('admissions')" data-nav="admissions">Admissions</a>
+            <a href="#events" onclick="navigateTo('events')" data-nav="events">Events</a>
+            <a href="#fees" onclick="navigateTo('fees')" data-nav="fees">Fees</a>
+            <a href="#syllabus" onclick="navigateTo('syllabus')" data-nav="syllabus">Syllabus</a>
+            <a href="#notices" onclick="navigateTo('notices')" data-nav="notices">Notices</a>
+            <a href="#gallery" onclick="navigateTo('gallery')" data-nav="gallery">Gallery</a>
+            <a href="#contact" onclick="navigateTo('contact')" data-nav="contact">Contact</a>
+        </div>
+
+        <div class="navbar-actions">
+            <a href="/login" class="btn-staff">Staff Login</a>
+            <a href="/admin" class="btn-admin">Admin</a>
+        </div>
+
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <a href="#home" onclick="navigateTo('home')" data-nav="home">&#127968; Home</a>
+        <a href="#admissions" onclick="navigateTo('admissions')" data-nav="admissions">&#128221; Admissions</a>
+        <a href="#events" onclick="navigateTo('events')" data-nav="events">&#127881; Events</a>
+        <a href="#fees" onclick="navigateTo('fees')" data-nav="fees">&#128176; Fees</a>
+        <a href="#syllabus" onclick="navigateTo('syllabus')" data-nav="syllabus">&#128218; Syllabus</a>
+        <a href="#notices" onclick="navigateTo('notices')" data-nav="notices">&#128227; Notices</a>
+        <a href="#gallery" onclick="navigateTo('gallery')" data-nav="gallery">&#128247; Gallery</a>
+        <a href="#contact" onclick="navigateTo('contact')" data-nav="contact">&#128222; Contact</a>
+        <div class="drawer-divider"></div>
+        <div class="drawer-actions">
+            <a href="/login" class="drawer-btn-staff">&#128100; Staff Login</a>
+            <a href="/admin" class="drawer-btn-admin">&#9881; Admin Panel</a>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+
+        <!-- ===== HOME SECTION ===== -->
+        <div class="page-section active" id="section-home">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-badge">&#9733; UDISE: 24131005639</div>
+                    <h1>Saint Mary <span>School</span>, Rajula</h1>
+                    <p class="tagline">Nurturing Young Minds Since 2011</p>
+                    <div class="admissions-pill">
+                        <span class="dot"></span>
+                        Admissions Open 2025-26
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-icon">&#127891;</div>
+                    <div class="stat-number">14+</div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">&#128101;</div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">&#127979;</div>
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Dedicated Teachers</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">&#128214;</div>
+                    <div class="stat-number">1-5</div>
+                    <div class="stat-label">Classes Offered</div>
+                </div>
+            </div>
+
+            <!-- At a Glance -->
+            <div class="glance-section">
+                <div class="section-heading">
+                    <h2>School At a Glance</h2>
+                    <div class="heading-line"></div>
+                </div>
+                <div class="glance-card">
+                    <div class="glance-grid">
+                        <div class="glance-item">
+                            <div class="glance-icon">&#127979;</div>
+                            <div>
+                                <div class="glance-label">UDISE Code</div>
+                                <div class="glance-value">24131005639</div>
+                            </div>
+                        </div>
+                        <div class="glance-item">
+                            <div class="glance-icon">&#127760;</div>
+                            <div>
+                                <div class="glance-label">Medium</div>
+                                <div class="glance-value">English Medium</div>
+                            </div>
+                        </div>
+                        <div class="glance-item">
+                            <div class="glance-icon">&#128200;</div>
+                            <div>
+                                <div class="glance-label">Classes</div>
+                                <div class="glance-value">Class 1 to 5</div>
+                            </div>
+                        </div>
+                        <div class="glance-item">
+                            <div class="glance-icon">&#127963;</div>
+                            <div>
+                                <div class="glance-label">Established</div>
+                                <div class="glance-value">2011</div>
+                            </div>
+                        </div>
+                        <div class="glance-item">
+                            <div class="glance-icon">&#129309;</div>
+                            <div>
+                                <div class="glance-label">Trust</div>
+                                <div class="glance-value">Merryland Trust</div>
+                            </div>
+                        </div>
+                        <div class="glance-item">
+                            <div class="glance-icon">&#128100;</div>
+                            <div>
+                                <div class="glance-label">Head Teacher</div>
+                                <div class="glance-value">Sajitha N</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Navigation -->
+            <div class="quick-nav-section">
+                <div class="section-heading">
+                    <h2>Quick Navigation</h2>
+                    <p>Explore our school at a glance</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div class="quick-nav-grid">
+                    <div class="quick-card" onclick="navigateTo('admissions')">
+                        <div class="card-icon">&#128221;</div>
+                        <h3>Admissions</h3>
+                        <p>Apply for the 2025-26 academic session. Enroll your child today.</p>
+                    </div>
+                    <div class="quick-card" onclick="navigateTo('events')">
+                        <div class="card-icon">&#127881;</div>
+                        <h3>Events</h3>
+                        <p>Upcoming school events, celebrations, and activities.</p>
+                    </div>
+                    <div class="quick-card" onclick="navigateTo('fees')">
+                        <div class="card-icon">&#128176;</div>
+                        <h3>Fee Structure</h3>
+                        <p>Complete fee details for all classes from 1 to 5.</p>
+                    </div>
+                    <div class="quick-card" onclick="navigateTo('syllabus')">
+                        <div class="card-icon">&#128218;</div>
+                        <h3>Syllabus</h3>
+                        <p>Academic curriculum and subject details for each class.</p>
+                    </div>
+                    <div class="quick-card" onclick="navigateTo('notices')">
+                        <div class="card-icon">&#128227;</div>
+                        <h3>Notices</h3>
+                        <p>Latest announcements, notifications, and circulars.</p>
+                    </div>
+                    <div class="quick-card" onclick="navigateTo('contact')">
+                        <div class="card-icon">&#128222;</div>
+                        <h3>Contact Us</h3>
+                        <p>Get in touch with us for any queries or information.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ADMISSIONS SECTION ===== -->
+        <div class="page-section" id="section-admissions">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Admissions</h2>
+                    <p>Enroll your child for the 2025-26 academic session</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div class="form-card">
+                    <form id="admissionForm" onsubmit="submitAdmissionForm(event)">
+                        <div class="form-grid">
+                            <div class="form-group" id="fg-studentName">
+                                <label>Student Name <span class="required">*</span></label>
+                                <input type="text" name="studentName" placeholder="Enter student's full name" required>
+                                <span class="error-msg">Student name is required</span>
+                            </div>
+                            <div class="form-group" id="fg-parentName">
+                                <label>Parent/Guardian Name <span class="required">*</span></label>
+                                <input type="text" name="parentName" placeholder="Enter parent's full name" required>
+                                <span class="error-msg">Parent name is required</span>
+                            </div>
+                            <div class="form-group" id="fg-contactNumber">
+                                <label>Contact Number <span class="required">*</span></label>
+                                <input type="tel" name="contactNumber" placeholder="Enter 10-digit phone number" required>
+                                <span class="error-msg">Valid phone number is required</span>
+                            </div>
+                            <div class="form-group" id="fg-email">
+                                <label>Email Address</label>
+                                <input type="email" name="email" placeholder="Enter email address">
+                                <span class="error-msg">Please enter a valid email</span>
+                            </div>
+                            <div class="form-group" id="fg-class">
+                                <label>Class Applying For <span class="required">*</span></label>
+                                <select name="class" required>
+                                    <option value="">Select Class</option>
+                                    <option value="Class 1">Class 1</option>
+                                    <option value="Class 2">Class 2</option>
+                                    <option value="Class 3">Class 3</option>
+                                    <option value="Class 4">Class 4</option>
+                                    <option value="Class 5">Class 5</option>
+                                </select>
+                                <span class="error-msg">Please select a class</span>
+                            </div>
+                            <div class="form-group" id="fg-dob">
+                                <label>Date of Birth</label>
+                                <input type="date" name="dob">
+                                <span class="error-msg">Please enter a valid date</span>
+                            </div>
+                            <div class="form-group full-width" id="fg-address">
+                                <label>Address</label>
+                                <textarea name="address" placeholder="Enter complete address" rows="3"></textarea>
+                            </div>
+                            <div class="form-group full-width" id="fg-message">
+                                <label>Message (Optional)</label>
+                                <textarea name="message" placeholder="Any additional information or questions" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn-submit" id="admissionSubmitBtn">&#128640; Submit Admission Inquiry</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== EVENTS SECTION ===== -->
+        <div class="page-section" id="section-events">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Events & Activities</h2>
+                    <p>Stay updated with our school events and celebrations</p>
+                    <div class="heading-line"></div>
+                </div>
+                <button class="refresh-btn" onclick="loadEvents()">&#128260; Refresh</button>
+                <div id="eventsContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== FEES SECTION ===== -->
+        <div class="page-section" id="section-fees">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Fee Structure</h2>
+                    <p>Academic year 2025-26 fee details</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div id="feesContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SYLLABUS SECTION ===== -->
+        <div class="page-section" id="section-syllabus">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Syllabus</h2>
+                    <p>Academic curriculum for all classes</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div id="syllabusContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== NOTICES SECTION ===== -->
+        <div class="page-section" id="section-notices">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Notices & Notifications</h2>
+                    <p>Latest announcements and circulars</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div id="noticesContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== GALLERY SECTION ===== -->
+        <div class="page-section" id="section-gallery">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Photo Gallery</h2>
+                    <p>Moments from our school life</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div id="galleryContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CONTACT SECTION ===== -->
+        <div class="page-section" id="section-contact">
+            <div class="section-page">
+                <div class="section-page-header">
+                    <h2>Contact Us</h2>
+                    <p>We would love to hear from you</p>
+                    <div class="heading-line"></div>
+                </div>
+                <div class="contact-grid">
+                    <div class="contact-info-card">
+                        <h3>Get In Touch</h3>
+                        <div class="contact-item">
+                            <div class="contact-icon">&#128205;</div>
+                            <div>
+                                <div class="contact-label">Address</div>
+                                <div class="contact-value">Saint Mary School, Rajula, Amreli District, Gujarat, India</div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">&#128222;</div>
+                            <div>
+                                <div class="contact-label">Phone</div>
+                                <div class="contact-value"><a href="tel:+919876543210">+91 98765 43210</a></div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">&#9993;</div>
+                            <div>
+                                <div class="contact-label">Email</div>
+                                <div class="contact-value"><a href="mailto:saintmaryschool.rajula@gmail.com">saintmaryschool.rajula@gmail.com</a></div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">&#128337;</div>
+                            <div>
+                                <div class="contact-label">Office Hours</div>
+                                <div class="contact-value">Mon - Sat: 8:00 AM - 2:00 PM</div>
+                            </div>
+                        </div>
+                        <div class="contact-map-placeholder">
+                            &#127758; Rajula, Amreli, Gujarat, India
+                        </div>
+                    </div>
+                    <div class="form-card">
+                        <form id="contactForm" onsubmit="submitContactForm(event)">
+                            <div class="form-grid">
+                                <div class="form-group" id="fg-c-name">
+                                    <label>Your Name <span class="required">*</span></label>
+                                    <input type="text" name="name" placeholder="Enter your name" required>
+                                    <span class="error-msg">Name is required</span>
+                                </div>
+                                <div class="form-group" id="fg-c-phone">
+                                    <label>Phone Number <span class="required">*</span></label>
+                                    <input type="tel" name="phone" placeholder="Enter phone number" required>
+                                    <span class="error-msg">Phone number is required</span>
+                                </div>
+                                <div class="form-group full-width" id="fg-c-email">
+                                    <label>Email Address</label>
+                                    <input type="email" name="email" placeholder="Enter email address">
+                                    <span class="error-msg">Please enter a valid email</span>
+                                </div>
+                                <div class="form-group full-width" id="fg-c-subject">
+                                    <label>Subject <span class="required">*</span></label>
+                                    <input type="text" name="subject" placeholder="Enter subject" required>
+                                    <span class="error-msg">Subject is required</span>
+                                </div>
+                                <div class="form-group full-width" id="fg-c-message">
+                                    <label>Message <span class="required">*</span></label>
+                                    <textarea name="message" placeholder="Type your message here..." rows="4" required></textarea>
+                                    <span class="error-msg">Message is required</span>
+                                </div>
+                                <button type="submit" class="btn-submit" id="contactSubmitBtn">&#9993; Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>&#127979; Saint Mary School, Rajula</h4>
+                <p>Established in 2011, Saint Mary School is committed to providing quality English medium education to the children of Rajula and surrounding areas. We nurture young minds in a caring and disciplined environment.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home" onclick="navigateTo('home')">&#127968; Home</a></li>
+                    <li><a href="#admissions" onclick="navigateTo('admissions')">&#128221; Admissions</a></li>
+                    <li><a href="#fees" onclick="navigateTo('fees')">&#128176; Fee Structure</a></li>
+                    <li><a href="#syllabus" onclick="navigateTo('syllabus')">&#128218; Syllabus</a></li>
+                    <li><a href="#notices" onclick="navigateTo('notices')">&#128227; Notices</a></li>
+                    <li><a href="#contact" onclick="navigateTo('contact')">&#128222; Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <div class="footer-contact-item">
+                    <span>&#128222;</span>
+                    <span>+91 98765 43210</span>
+                </div>
+                <div class="footer-contact-item">
+                    <span>&#9993;</span>
+                    <span>saintmaryschool.rajula@gmail.com</span>
+                </div>
+                <div class="footer-contact-item">
+                    <span>&#128205;</span>
+                    <span>Rajula, Amreli, Gujarat</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 Saint Mary School, Rajula. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ========== TOAST CONTAINER ========== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        // ===== NAVIGATION =====
+        const sections = ['home', 'admissions', 'events', 'fees', 'syllabus', 'notices', 'gallery', 'contact'];
+        let eventsLoaded = false;
+        let feesLoaded = false;
+        let syllabusLoaded = false;
+        let noticesLoaded = false;
+        let galleryLoaded = false;
+
+        function navigateTo(sectionId) {
+            // Validate section
+            if (!sections.includes(sectionId)) return;
+
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(function(s) {
+                s.classList.remove('active');
+            });
+
+            // Show target section
+            var target = document.getElementById('section-' + sectionId);
+            if (target) {
+                target.classList.add('active');
+            }
+
+            // Update hash
+            window.location.hash = sectionId;
+
+            // Update active nav links
+            document.querySelectorAll('[data-nav]').forEach(function(link) {
+                link.classList.remove('active');
+                if (link.getAttribute('data-nav') === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Close mobile menu if open
+            closeMobileMenu();
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Lazy load data
+            loadSectionData(sectionId);
+        }
+
+        function loadSectionData(sectionId) {
+            switch (sectionId) {
+                case 'events':
+                    if (!eventsLoaded) loadEvents();
+                    break;
+                case 'fees':
+                    if (!feesLoaded) loadFees();
+                    break;
+                case 'syllabus':
+                    if (!syllabusLoaded) loadSyllabus();
+                    break;
+                case 'notices':
+                    if (!noticesLoaded) loadNotices();
+                    break;
+                case 'gallery':
+                    if (!galleryLoaded) loadGallery();
+                    break;
+            }
+        }
+
+        // Handle hash on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            var hash = window.location.hash.replace('#', '');
+            if (hash && sections.includes(hash)) {
+                navigateTo(hash);
+            } else {
+                navigateTo('home');
+            }
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('hashchange', function() {
+            var hash = window.location.hash.replace('#', '');
+            if (hash && sections.includes(hash)) {
+                navigateTo(hash);
+            }
+        });
+
+        // ===== MOBILE MENU =====
+        function toggleMobileMenu() {
+            var drawer = document.getElementById('mobileDrawer');
+            var overlay = document.getElementById('mobileOverlay');
+            var btn = document.getElementById('hamburgerBtn');
+            var isOpen = drawer.classList.contains('open');
+
+            if (isOpen) {
+                closeMobileMenu();
+            } else {
+                drawer.classList.add('open');
+                overlay.classList.add('show');
+                btn.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobileDrawer').classList.remove('open');
+            document.getElementById('mobileOverlay').classList.remove('show');
+            document.getElementById('hamburgerBtn').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ===== TOAST NOTIFICATIONS =====
+        function showToast(message, type) {
+            type = type || 'success';
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+
+            var icon = type === 'success' ? '&#9989;' : '&#10060;';
+            toast.innerHTML = '<span>' + icon + '</span><span>' + message + '</span><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>';
+
+            container.appendChild(toast);
+
+            // Auto-dismiss after 5 seconds
+            setTimeout(function() {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // ===== FORM VALIDATION =====
+        function validateField(groupId, value, condition) {
+            var group = document.getElementById(groupId);
+            if (!condition) {
+                group.classList.add('has-error');
+                return false;
+            }
+            group.classList.remove('has-error');
+            return true;
+        }
+
+        function clearValidation(groupId) {
+            var group = document.getElementById(groupId);
+            if (group) group.classList.remove('has-error');
+        }
+
+        // ===== ADMISSION FORM =====
+        function submitAdmissionForm(e) {
+            e.preventDefault();
+
+            var form = document.getElementById('admissionForm');
+            var data = new FormData(form);
+            var valid = true;
+
+            // Validate required fields
+            if (!validateField('fg-studentName', data.get('studentName'), data.get('studentName').trim().length > 0)) valid = false;
+            if (!validateField('fg-parentName', data.get('parentName'), data.get('parentName').trim().length > 0)) valid = false;
+            if (!validateField('fg-contactNumber', data.get('contactNumber'), /^[0-9]{10}$/.test(data.get('contactNumber').trim()))) valid = false;
+            if (!validateField('fg-class', data.get('class'), data.get('class') !== '')) valid = false;
+
+            // Optional field validation
+            if (data.get('email') && !validateField('fg-email', data.get('email'), /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.get('email')))) valid = false;
+
+            if (!valid) {
+                showToast('Please fill in all required fields correctly.', 'error');
+                return;
+            }
+
+            var btn = document.getElementById('admissionSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></span> Submitting...';
+
+            var jsonData = {
+                studentName: data.get('studentName').trim(),
+                parentName: data.get('parentName').trim(),
+                contactNumber: data.get('contactNumber').trim(),
+                email: data.get('email').trim() || null,
+                class: data.get('class'),
+                dob: data.get('dob') || null,
+                address: data.get('address').trim() || null,
+                message: data.get('message').trim() || null
+            };
+
+            fetch('/api/admission-inquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonData)
+            })
+            .then(function(res) {
+                if (!res.ok) throw new Error('Server error');
+                return res.json();
+            })
+            .then(function() {
+                showToast('Admission inquiry submitted successfully! We will get back to you soon.', 'success');
+                form.reset();
+                // Clear validation
+                ['fg-studentName','fg-parentName','fg-contactNumber','fg-email','fg-class','fg-dob','fg-address','fg-message'].forEach(clearValidation);
+            })
+            .catch(function(err) {
+                showToast('Failed to submit. Please try again later. (' + err.message + ')', 'error');
+            })
+            .finally(function() {
+                btn.disabled = false;
+                btn.innerHTML = '&#128640; Submit Admission Inquiry';
+            });
+        }
+
+        // ===== CONTACT FORM =====
+        function submitContactForm(e) {
+            e.preventDefault();
+
+            var form = document.getElementById('contactForm');
+            var data = new FormData(form);
+            var valid = true;
+
+            if (!validateField('fg-c-name', data.get('name'), data.get('name').trim().length > 0)) valid = false;
+            if (!validateField('fg-c-phone', data.get('phone'), data.get('phone').trim().length >= 10)) valid = false;
+            if (data.get('email') && !validateField('fg-c-email', data.get('email'), /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.get('email')))) valid = false;
+            if (!validateField('fg-c-subject', data.get('subject'), data.get('subject').trim().length > 0)) valid = false;
+            if (!validateField('fg-c-message', data.get('message'), data.get('message').trim().length > 0)) valid = false;
+
+            if (!valid) {
+                showToast('Please fill in all required fields correctly.', 'error');
+                return;
+            }
+
+            var btn = document.getElementById('contactSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></span> Sending...';
+
+            var jsonData = {
+                name: data.get('name').trim(),
+                phone: data.get('phone').trim(),
+                email: data.get('email').trim() || null,
+                subject: data.get('subject').trim(),
+                message: data.get('message').trim()
+            };
+
+            fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonData)
+            })
+            .then(function(res) {
+                if (!res.ok) throw new Error('Server error');
+                return res.json();
+            })
+            .then(function() {
+                showToast('Message sent successfully! We will respond shortly.', 'success');
+                form.reset();
+                ['fg-c-name','fg-c-phone','fg-c-email','fg-c-subject','fg-c-message'].forEach(clearValidation);
+            })
+            .catch(function(err) {
+                showToast('Failed to send message. Please try again later. (' + err.message + ')', 'error');
+            })
+            .finally(function() {
+                btn.disabled = false;
+                btn.innerHTML = '&#9993; Send Message';
+            });
+        }
+
+        // ===== LOAD EVENTS =====
+        function loadEvents() {
+            var container = document.getElementById('eventsContent');
+            container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            fetch('/api/events')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                eventsLoaded = true;
+                var events = Array.isArray(data) ? data : (data.events || data.data || []);
+
+                if (events.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128197;</div><h3>No Upcoming Events</h3><p>There are no events scheduled at the moment. Please check back later.</p></div>';
+                    return;
+                }
+
+                var html = '<div class="events-grid">';
+                events.forEach(function(ev) {
+                    var dateObj = ev.date ? new Date(ev.date) : new Date();
+                    var day = dateObj.getDate();
+                    var month = dateObj.toLocaleString('en', { month: 'short' });
+                    var year = dateObj.getFullYear();
+                    var time = ev.time || 'TBD';
+                    var venue = ev.venue || 'School Campus';
+
+                    html += '<div class="event-card">';
+                    html += '  <div class="event-date-badge">';
+                    html += '    <div class="day">' + day + '</div>';
+                    html += '    <div class="month">' + month + '</div>';
+                    html += '    <div class="year">' + year + '</div>';
+                    html += '  </div>';
+                    html += '  <div class="event-info">';
+                    html += '    <h3>' + escapeHtml(ev.title || 'Event') + '</h3>';
+                    html += '    <div class="event-meta">';
+                    html += '      <span>&#128337; ' + escapeHtml(time) + '</span>';
+                    html += '      <span>&#128205; ' + escapeHtml(venue) + '</span>';
+                    html += '    </div>';
+                    html += '    <p>' + escapeHtml(ev.description || '') + '</p>';
+                    html += '  </div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><h3>Unable to Load Events</h3><p>Please check your connection and try again.</p></div>';
+            });
+        }
+
+        // ===== LOAD FEES =====
+        function loadFees() {
+            var container = document.getElementById('feesContent');
+            container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            fetch('/api/fee-structure')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                feesLoaded = true;
+                var fees = Array.isArray(data) ? data : (data.feeStructure || data.data || []);
+
+                if (fees.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128176;</div><h3>Fee Structure Coming Soon</h3><p>Fee details for the 2025-26 session will be available shortly. Please contact the school office for information.</p></div>';
+                    return;
+                }
+
+                var html = '<div class="table-wrapper"><table class="fee-table">';
+                html += '<thead><tr>';
+                html += '<th>Class</th><th>Tuition Fee</th><th>Exam Fee</th><th>Lab Fee</th><th>Sports Fee</th><th>Transport Fee</th><th>Total</th>';
+                html += '</tr></thead><tbody>';
+
+                fees.forEach(function(fee) {
+                    var total = (Number(fee.tuitionFee) || 0) + (Number(fee.examFee) || 0) + (Number(fee.labFee) || 0) + (Number(fee.sportsFee) || 0) + (Number(fee.transportFee) || 0);
+                    html += '<tr>';
+                    html += '<td><strong>' + escapeHtml(fee.className || fee.class || '') + '</strong></td>';
+                    html += '<td>&#8377; ' + (Number(fee.tuitionFee) || 0).toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + (Number(fee.examFee) || 0).toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + (Number(fee.labFee) || 0).toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + (Number(fee.sportsFee) || 0).toLocaleString('en-IN') + '</td>';
+                    html += '<td>&#8377; ' + (Number(fee.transportFee) || 0).toLocaleString('en-IN') + '</td>';
+                    html += '<td><strong>&#8377; ' + total.toLocaleString('en-IN') + '</strong></td>';
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><h3>Unable to Load Fee Structure</h3><p>Please check your connection and try again.</p></div>';
+            });
+        }
+
+        // ===== LOAD SYLLABUS =====
+        function loadSyllabus() {
+            var container = document.getElementById('syllabusContent');
+            container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            fetch('/api/syllabus')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                syllabusLoaded = true;
+                var syllabus = Array.isArray(data) ? data : (data.syllabus || data.data || []);
+
+                if (syllabus.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128218;</div><h3>Syllabus Coming Soon</h3><p>The academic syllabus will be uploaded shortly. Please check back later.</p></div>';
+                    return;
+                }
+
+                // Group by className
+                var grouped = {};
+                syllabus.forEach(function(item) {
+                    var key = item.className || 'General';
+                    if (!grouped[key]) grouped[key] = [];
+                    grouped[key].push(item);
+                });
+
+                var html = '<div class="accordion">';
+                var classNames = Object.keys(grouped).sort();
+                classNames.forEach(function(className, idx) {
+                    var subjects = grouped[className];
+                    html += '<div class="accordion-item' + (idx === 0 ? ' open' : '') + '">';
+                    html += '  <button class="accordion-header" onclick="toggleAccordion(this)">';
+                    html += '    <h3>&#128214; ' + escapeHtml(className) + ' <span style="font-size:13px;color:#6b7280;font-weight:400;">(' + subjects.length + ' subjects)</span></h3>';
+                    html += '    <span class="accordion-arrow">&#9660;</span>';
+                    html += '  </button>';
+                    html += '  <div class="accordion-body" style="max-height:' + (idx === 0 ? '1000px' : '0') + ';">';
+                    html += '    <div class="accordion-body-inner">';
+
+                    subjects.forEach(function(sub) {
+                        html += '<div class="subject-item">';
+                        html += '  <div class="subject-dot"></div>';
+                        html += '  <div>';
+                        html += '    <div class="subject-name">' + escapeHtml(sub.subjectName || sub.name || '') + '</div>';
+                        if (sub.description) {
+                            html += '    <div class="subject-desc">' + escapeHtml(sub.description) + '</div>';
+                        }
+                        html += '  </div>';
+                        html += '</div>';
+                    });
+
+                    html += '    </div>';
+                    html += '  </div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><h3>Unable to Load Syllabus</h3><p>Please check your connection and try again.</p></div>';
+            });
+        }
+
+        function toggleAccordion(header) {
+            var item = header.parentElement;
+            var body = item.querySelector('.accordion-body');
+            var isOpen = item.classList.contains('open');
+
+            if (isOpen) {
+                item.classList.remove('open');
+                body.style.maxHeight = '0';
+            } else {
+                item.classList.add('open');
+                body.style.maxHeight = body.scrollHeight + 'px';
+            }
+        }
+
+        // ===== LOAD NOTICES =====
+        function loadNotices() {
+            var container = document.getElementById('noticesContent');
+            container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            fetch('/api/notifications')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                noticesLoaded = true;
+                var notices = Array.isArray(data) ? data : (data.notifications || data.data || []);
+
+                if (notices.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128227;</div><h3>No Notices at This Time</h3><p>There are no current notifications. Please check back later.</p></div>';
+                    return;
+                }
+
+                var html = '<div class="notice-list">';
+                notices.forEach(function(notice) {
+                    var isImportant = notice.isImportant || notice.priority === 'high' || notice.important;
+                    var category = (notice.category || 'general').toLowerCase();
+                    var badgeClass = 'badge-' + category;
+
+                    // Map category to badge class
+                    if (['important', 'urgent'].indexOf(category) !== -1) badgeClass = 'badge-important';
+                    if (['academic', 'exam', 'education'].indexOf(category) !== -1) badgeClass = 'badge-academic';
+                    if (['general', 'info', 'information'].indexOf(category) !== -1) badgeClass = 'badge-general';
+                    if (['event', 'activity', 'celebration'].indexOf(category) !== -1) badgeClass = 'badge-event';
+                    if (['fee', 'payment', 'finance'].indexOf(category) !== -1) badgeClass = 'badge-fee';
+
+                    var badgeText = category.charAt(0).toUpperCase() + category.slice(1);
+                    if (isImportant) badgeText = 'Important';
+
+                    var dateStr = notice.date ? new Date(notice.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+                    html += '<div class="notice-card">';
+                    html += '  <div class="notice-badge-wrap">';
+                    if (isImportant) {
+                        html += '<span class="notice-badge badge-important">&#128308; Important</span>';
+                    }
+                    html += '<span class="notice-badge ' + badgeClass + '">' + escapeHtml(badgeText) + '</span>';
+                    html += '  </div>';
+                    html += '  <div class="notice-content">';
+                    html += '    <h3>' + escapeHtml(notice.title || 'Notice') + '</h3>';
+                    html += '    <p>' + escapeHtml(notice.content || notice.message || '') + '</p>';
+                    if (dateStr) {
+                        html += '    <div class="notice-date">&#128197; ' + dateStr + '</div>';
+                    }
+                    html += '  </div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><h3>Unable to Load Notices</h3><p>Please check your connection and try again.</p></div>';
+            });
+        }
+
+        // ===== LOAD GALLERY =====
+        function loadGallery() {
+            var container = document.getElementById('galleryContent');
+            container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            fetch('/api/gallery')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                galleryLoaded = true;
+                var images = Array.isArray(data) ? data : (data.gallery || data.images || data.data || []);
+
+                if (images.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128247;</div><h3>Gallery Coming Soon</h3><p>Photos from school events and activities will be uploaded here soon.</p></div>';
+                    return;
+                }
+
+                var html = '<div class="gallery-grid">';
+                images.forEach(function(img) {
+                    var label = img.title || img.caption || img.category || 'School Photo';
+                    html += '<div class="gallery-card" title="' + escapeHtml(label) + '">';
+                    html += '  <div class="gallery-icon">&#128247;</div>';
+                    html += '  <div class="gallery-label">' + escapeHtml(label) + '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;&#65039;</div><h3>Unable to Load Gallery</h3><p>Please check your connection and try again.</p></div>';
+            });
+        }
+
+        // ===== UTILITY =====
+        function escapeHtml(str) {
+            if (!str) return '';
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+    </script>
+
+</body>
+</html>

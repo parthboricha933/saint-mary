@@ -1,0 +1,12 @@
+{
+    admin off
+    :81 {
+        @transform_port_query {
+            query port=*
+        }
+        handle @transform_port_query {
+            uri strip_prefix /{port}
+            reverse_proxy localhost:{port}
+        }
+        reverse_proxy localhost:3000
+    }

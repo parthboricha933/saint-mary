@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  password   String
+  role       String
+  phone      String?
+  subject    String?
+  status     String   @default("pending")
+  approvedBy String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        String
+  time        String?
+  venue       String?
+  imageUrl    String?
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String   @default("general")
+  isImportant Boolean  @default(false)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Syllabus {
+  id           String   @id @default(cuid())
+  className    String
+  subject      String
+  description  String?
+  fileUrl      String?
+  academicYear String
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model FeeStructure {
+  id           String   @id @default(cuid())
+  classRange   String
+  tuitionFee   String
+  examFee      String?
+  labFee       String?
+  sportsFee    String?
+  transportFee String?
+  totalFee     String
+  academicYear String
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model GalleryImage {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  category    String   @default("general")
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdmissionInquiry {
+  id            String   @id @default(cuid())
+  studentName   String
+  parentName    String
+  contactNumber String
+  email         String?
+  classApplied  String
+  message       String?
+  status        String   @default("pending")
+  adminReply    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
