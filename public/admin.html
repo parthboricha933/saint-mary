@@ -361,6 +361,18 @@
             border-color: rgba(220,38,38,0.8);
         }
 
+        /* Sidebar badge */
+        .badge {
+            display: inline-block;
+            background: #ef4444;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
         /* Sidebar overlay (mobile) */
         .sidebar-overlay {
             display: none;
@@ -841,6 +853,53 @@
             }
         }
     </style>
+    <style>
+        /* Message & Inquiry Cards */
+        .msg-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 14px;
+            transition: box-shadow 0.2s;
+            border-left: 4px solid #059669;
+        }
+        .msg-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+        .msg-card.unread { border-left-color: #f59e0b; background: #fffbeb; }
+        .msg-card.inquiry-card { border-left-color: #3b82f6; }
+        .msg-card.status-pending { border-left-color: #f59e0b; }
+        .msg-card.status-approved { border-left-color: #059669; }
+        .msg-card.status-rejected { border-left-color: #ef4444; }
+        .msg-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+        .msg-name { font-size: 16px; font-weight: 700; color: #111827; }
+        .msg-email { font-size: 13px; color: #6b7280; }
+        .msg-subject { font-size: 14px; font-weight: 600; color: #065f46; margin-bottom: 6px; }
+        .msg-body { font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 10px; }
+        .msg-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #9ca3af; }
+        .msg-meta span { display: flex; align-items: center; gap: 4px; }
+        .msg-status {
+            display: inline-block; padding: 2px 10px; border-radius: 6px;
+            font-size: 12px; font-weight: 600; text-transform: capitalize;
+        }
+        .msg-status.pending { background: #fef3c7; color: #92400e; }
+        .msg-status.approved { background: #d1fae5; color: #065f46; }
+        .msg-status.replied { background: #dbeafe; color: #1e40af; }
+        .msg-status.read { background: #f3f4f6; color: #4b5563; }
+        .msg-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .msg-reply-area { margin-top: 10px; }
+        .msg-reply-area textarea { width: 100%; min-height: 70px; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-family: inherit; font-size: 14px; resize: vertical; }
+        .msg-reply-area textarea:focus { outline: none; border-color: #059669; box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+        .reply-section { margin-top: 10px; padding: 12px 16px; background: #f0fdf4; border-radius: 8px; border-left: 3px solid #059669; }
+        .reply-section strong { color: #065f46; font-size: 13px; }
+        .reply-section p { color: #374151; font-size: 13px; margin-top: 4px; }
+        .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .filter-btn {
+            padding: 6px 14px; border-radius: 8px; border: 1px solid #d1d5db;
+            background: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+            font-family: inherit; color: #374151; transition: all 0.15s;
+        }
+        .filter-btn.active, .filter-btn:hover { background: #065f46; color: #fff; border-color: #065f46; }
+    </style>
 </head>
 <body>
 
@@ -925,6 +984,15 @@
             </button>
             <button class="sidebar-nav-item" data-tab="create-user" onclick="switchTab('create-user', this)">
                 <span class="nav-icon">&#10010;</span> Create User
+            </button>
+            <div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 16px;"></div>
+            <button class="sidebar-nav-item" data-tab="inquiries" onclick="switchTab('inquiries', this)">
+                <span class="nav-icon">&#128221;</span> Admissions
+                <span class="badge" id="inquiryBadge" style="display:none;">0</span>
+            </button>
+            <button class="sidebar-nav-item" data-tab="messages" onclick="switchTab('messages', this)">
+                <span class="nav-icon">&#9993;</span> Messages
+                <span class="badge" id="msgBadge" style="display:none;">0</span>
             </button>
         </nav>
         <div class="sidebar-footer">
@@ -1059,6 +1127,38 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- ===== ADMISSION INQUIRIES TAB ===== -->
+        <div class="tab-content" id="tab-inquiries">
+            <div class="page-header">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <h1>Admission Inquiries</h1>
+                        <p>Review and respond to admission applications from parents.</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="loadInquiries()">&#128260; Refresh</button>
+                </div>
+            </div>
+            <div id="inquiriesContent">
+                <div class="empty-state">&#128221; Loading inquiries...</div>
+            </div>
+        </div>
+
+        <!-- ===== CONTACT MESSAGES TAB ===== -->
+        <div class="tab-content" id="tab-messages">
+            <div class="page-header">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <h1>Contact Messages</h1>
+                        <p>View messages submitted through the contact form.</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="loadMessages()">&#128260; Refresh</button>
+                </div>
+            </div>
+            <div id="messagesContent">
+                <div class="empty-state">&#9993; Loading messages...</div>
             </div>
         </div>
 
@@ -1518,6 +1618,225 @@
     function hideLoading() {
         document.getElementById('loadingOverlay').classList.remove('show');
     }
+
+    /* ============================================================
+       CONTACT MESSAGES
+    ============================================================ */
+    function loadMessages() {
+        var container = document.getElementById('messagesContent');
+        container.innerHTML = '<div class="empty-state">&#128260; Loading messages...</div>';
+        fetch('/api/contact-messages', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var messages = data.messages || data.data || [];
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="empty-state">&#9993; No messages yet. Messages from the contact form will appear here.</div>';
+                    return;
+                }
+                var unreadCount = messages.filter(function(m) { return !m.isRead; }).length;
+                var badge = document.getElementById('msgBadge');
+                if (unreadCount > 0) { badge.style.display = 'inline'; badge.textContent = unreadCount; }
+                else { badge.style.display = 'none'; }
+
+                var html = '<div class="filter-bar">';
+                html += '<button class="filter-btn active" onclick="filterMessages(\'all\', this)">All (' + messages.length + ')</button>';
+                html += '<button class="filter-btn" onclick="filterMessages(\'unread\', this)">Unread (' + unreadCount + ')</button>';
+                html += '</div>';
+
+                messages.forEach(function(msg) {
+                    var esc = escapeHtmlAdmin;
+                    var statusCls = msg.isRead ? '' : ' unread';
+                    var statusBadge = msg.isRead ? '<span class="msg-status read">Read</span>' : '<span class="msg-status pending">New</span>';
+                    html += '<div class="msg-card' + statusCls + '" data-read="' + msg.isRead + '">';
+                    html += '<div class="msg-header"><div><span class="msg-name">' + esc(msg.name) + '</span> <span class="msg-email">' + esc(msg.email) + '</span></div>' + statusBadge + '</div>';
+                    html += '<div class="msg-subject">' + esc(msg.subject) + '</div>';
+                    html += '<div class="msg-body">' + esc(msg.message) + '</div>';
+                    html += '<div class="msg-meta"><span>&#128222; ' + esc(msg.phone || 'N/A') + '</span><span>&#128197; ' + new Date(msg.createdAt).toLocaleString('en-IN', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) + '</span></div>';
+                    if (!msg.isRead) {
+                        html += '<div class="msg-actions"><button class="btn btn-green btn-sm" onclick="markMessageRead(\'' + msg.id + '\')">&#9989; Mark as Read</button>';
+                        html += '<button class="btn btn-sm" style="background:#ef4444;color:#fff;" onclick="deleteMessage(\'' + msg.id + '\')">&#128465; Delete</button></div>';
+                    } else {
+                        html += '<div class="msg-actions"><button class="btn btn-sm" style="background:#ef4444;color:#fff;" onclick="deleteMessage(\'' + msg.id + '\')">&#128465; Delete</button></div>';
+                    }
+                    html += '</div>';
+                });
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state">&#9888;&#65039; Failed to load messages.</div>';
+            });
+    }
+
+    function filterMessages(filter, btn) {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        if (btn) btn.classList.add('active');
+        document.querySelectorAll('#messagesContent .msg-card').forEach(function(card) {
+            if (filter === 'all') { card.style.display = ''; }
+            else if (filter === 'unread') { card.style.display = card.dataset.read === 'false' ? '' : 'none'; }
+        });
+    }
+
+    function markMessageRead(id) {
+        fetch('/api/contact-messages/' + id, { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                fetch('/api/contact-messages/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isRead: true }),
+                    credentials: 'include'
+                }).then(function() { loadMessages(); showToast('Message marked as read'); });
+            });
+    }
+
+    function deleteMessage(id) {
+        if (!confirm('Delete this message? This cannot be undone.')) return;
+        fetch('/api/contact-messages/' + id, { method: 'DELETE', credentials: 'include' })
+            .then(function() { loadMessages(); showToast('Message deleted'); })
+            .catch(function() { showToast('Failed to delete', 'error'); });
+    }
+
+    /* ============================================================
+       ADMISSION INQUIRIES
+    ============================================================ */
+    function loadInquiries() {
+        var container = document.getElementById('inquiriesContent');
+        container.innerHTML = '<div class="empty-state">&#128260; Loading inquiries...</div>';
+        fetch('/api/admission-inquiries', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var inquiries = data.inquiries || data.data || [];
+                if (inquiries.length === 0) {
+                    container.innerHTML = '<div class="empty-state">&#128221; No admission inquiries yet.</div>';
+                    return;
+                }
+                var pendingCount = inquiries.filter(function(i) { return i.status === 'pending'; }).length;
+                var badge = document.getElementById('inquiryBadge');
+                if (pendingCount > 0) { badge.style.display = 'inline'; badge.textContent = pendingCount; }
+                else { badge.style.display = 'none'; }
+
+                var html = '<div class="filter-bar">';
+                html += '<button class="filter-btn active" onclick="filterInquiries(\'all\', this)">All (' + inquiries.length + ')</button>';
+                html += '<button class="filter-btn" onclick="filterInquiries(\'pending\', this)">Pending (' + pendingCount + ')</button>';
+                html += '<button class="filter-btn" onclick="filterInquiries(\'approved\', this)">Approved</button>';
+                html += '<button class="filter-btn" onclick="filterInquiries(\'rejected\', this)">Rejected</button>';
+                html += '</div>';
+
+                inquiries.forEach(function(inq) {
+                    var esc = escapeHtmlAdmin;
+                    var statusCls = 'status-' + inq.status;
+                    html += '<div class="msg-card inquiry-card ' + statusCls + '" data-status="' + inq.status + '">';
+                    html += '<div class="msg-header"><div><span class="msg-name">' + esc(inq.studentName) + '</span></div><span class="msg-status ' + inq.status + '">' + inq.status + '</span></div>';
+                    html += '<div class="msg-meta" style="margin-bottom:10px;"><span>&#128106; Parent: ' + esc(inq.parentName) + '</span><span>&#128222; ' + esc(inq.contactNumber) + '</span>';
+                    if (inq.email) html += '<span>&#9993; ' + esc(inq.email) + '</span>';
+                    html += '<span>&#128218; Class: <strong>' + esc(inq.classApplied) + '</strong></span>';
+                    html += '<span>&#128197; ' + new Date(inq.createdAt).toLocaleString('en-IN', {day:'numeric',month:'short',year:'numeric'}) + '</span></div>';
+                    if (inq.message) html += '<div class="msg-body">' + esc(inq.message) + '</div>';
+                    if (inq.adminReply) {
+                        html += '<div class="reply-section"><strong>&#128172; Admin Reply:</strong><p>' + esc(inq.adminReply) + '</p></div>';
+                    }
+                    html += '<div class="msg-actions">';
+                    if (inq.status === 'pending') {
+                        html += '<button class="btn btn-green btn-sm" onclick="updateInquiry(\'' + inq.id + '\', \'approved\')">&#9989; Approve</button>';
+                        html += '<button class="btn btn-sm" style="background:#ef4444;color:#fff;" onclick="updateInquiry(\'' + inq.id + '\', \'rejected\')">&#10060; Reject</button>';
+                    }
+                    html += '<button class="btn btn-outline btn-sm" onclick="toggleReplyBox(\'' + inq.id + '\')">&#128172; Reply</button>';
+                    html += '<button class="btn btn-sm" style="background:#6b7280;color:#fff;" onclick="deleteInquiry(\'' + inq.id + '\')">&#128465; Delete</button>';
+                    html += '</div>';
+                    html += '<div class="msg-reply-area" id="reply-' + inq.id + '" style="display:none;">';
+                    html += '<textarea id="reply-text-' + inq.id + '" placeholder="Type your reply to the parent..."></textarea>';
+                    html += '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn btn-green btn-sm" onclick="sendReply(\'' + inq.id + '\')">&#10148; Send Reply</button>';
+                    html += '<button class="btn btn-outline btn-sm" onclick="toggleReplyBox(\'' + inq.id + '\')">Cancel</button></div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                container.innerHTML = html;
+            })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state">&#9888;&#65039; Failed to load inquiries.</div>';
+            });
+    }
+
+    function filterInquiries(filter, btn) {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        if (btn) btn.classList.add('active');
+        document.querySelectorAll('#inquiriesContent .msg-card').forEach(function(card) {
+            card.style.display = (filter === 'all' || card.dataset.status === filter) ? '' : 'none';
+        });
+    }
+
+    function updateInquiry(id, status) {
+        fetch('/api/admission-inquiries/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: status }),
+            credentials: 'include'
+        }).then(function() {
+            loadInquiries();
+            showToast('Inquiry ' + status);
+        }).catch(function() { showToast('Failed to update', 'error'); });
+    }
+
+    function deleteInquiry(id) {
+        if (!confirm('Delete this inquiry? This cannot be undone.')) return;
+        fetch('/api/admission-inquiries/' + id, { method: 'DELETE', credentials: 'include' })
+            .then(function() { loadInquiries(); showToast('Inquiry deleted'); })
+            .catch(function() { showToast('Failed to delete', 'error'); });
+    }
+
+    function toggleReplyBox(id) {
+        var box = document.getElementById('reply-' + id);
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function sendReply(id) {
+        var text = document.getElementById('reply-text-' + id).value.trim();
+        if (!text) { showToast('Please type a reply', 'error'); return; }
+        fetch('/api/admission-inquiries/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ adminReply: text, status: 'approved' }),
+            credentials: 'include'
+        }).then(function() {
+            loadInquiries();
+            showToast('Reply sent!');
+        }).catch(function() { showToast('Failed to send reply', 'error'); });
+    }
+
+    function escapeHtmlAdmin(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    // Load counts on init
+    function loadAdminCounts() {
+        fetch('/api/contact-messages', { credentials: 'include' }).then(function(r) { return r.json(); }).then(function(data) {
+            var msgs = data.messages || [];
+            var unread = msgs.filter(function(m) { return !m.isRead; }).length;
+            var badge = document.getElementById('msgBadge');
+            if (unread > 0) { badge.style.display = 'inline'; badge.textContent = unread; }
+        }).catch(function() {});
+        fetch('/api/admission-inquiries', { credentials: 'include' }).then(function(r) { return r.json(); }).then(function(data) {
+            var inqs = data.inquiries || [];
+            var pending = inqs.filter(function(i) { return i.status === 'pending'; }).length;
+            var badge = document.getElementById('inquiryBadge');
+            if (pending > 0) { badge.style.display = 'inline'; badge.textContent = pending; }
+        }).catch(function() {});
+    }
+
+    // Load messages/inquiries on first tab visit
+    var _origSwitchTab = switchTab;
+    switchTab = function(tabId, navItem) {
+        _origSwitchTab(tabId, navItem);
+        if (tabId === 'messages') loadMessages();
+        if (tabId === 'inquiries') loadInquiries();
+    };
+
+    // Load badge counts on page load
+    var _origInit = initApp;
+    initApp = function() { _origInit(); loadAdminCounts(); };
 </script>
 
 </body>
