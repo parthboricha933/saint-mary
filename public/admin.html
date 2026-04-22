@@ -976,7 +976,7 @@
 <!-- ======================== LOGIN SCREEN ======================== -->
 <div id="login-screen">
     <div class="login-card">
-        <img src="uploads/school-logo.png" alt="Saint Mary School" class="login-logo"
+        <img src="/uploads/school-logo.png" alt="Saint Mary School" class="login-logo"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <div class="login-logo-placeholder" style="display:none;">SM</div>
         <h1>Admin Panel</h1>
@@ -1019,7 +1019,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="uploads/school-logo.png" alt="Saint Mary School">
+            <img src="/uploads/school-logo.png" alt="Saint Mary School">
             <h2>Saint Mary School</h2>
             <p>Admin Dashboard</p>
         </div>
@@ -2134,7 +2134,7 @@
         container.innerHTML = galleryImages.map(function(img) {
             return '<div class="gallery-card">' +
                 '<button class="gallery-del" onclick="deleteGalleryImage(\'' + img.id + '\')" title="Delete">&#10005;</button>' +
-                '<img src="' + escapeHtml(img.imageUrl || '') + '" alt="' + escapeHtml(img.title || '') + '" onerror="this.src=\'uploads/school-logo.png\'">' +
+                '<img src="' + escapeHtml(img.imageUrl || '') + '" alt="' + escapeHtml(img.title || '') + '" onerror="this.src=\'/uploads/school-logo.png\'">' +
                 '<div class="gallery-card-info">' +
                 '<span class="gallery-cat">' + escapeHtml(img.category || 'general') + '</span>' +
                 '</div></div>';
