@@ -1,12 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
 const crypto = require('crypto');
 
-// ── Prisma singleton for serverless ────────────────────────────────
+// Prisma singleton for serverless (prevents connection exhaustion)
 const globalForPrisma = global;
 const prisma = globalForPrisma.prisma || new PrismaClient();
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
-// ── Auth config from env vars ─────────────────────────────────────
+// Admin credentials from environment variables
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 const ADMIN_TOKEN_HASH = process.env.ADMIN_TOKEN_HASH || '';
 
@@ -35,7 +35,11 @@ async function checkAdminAuth(cookies) {
 async function checkUserAuth(cookies) {
   const userId = cookies.user_token;
   if (!userId) return null;
-  return prisma.user.findUnique({ where: { id: userId } });
+  try {
+    return await prisma.user.findUnique({ where: { id: userId } });
+  } catch (e) {
+    return null;
+  }
 }
 
 async function checkAdminOrPrincipal(cookies) {
@@ -98,8 +102,8 @@ apiRoutes['POST /api/auth/user-login'] = async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(401).json({ error: 'Invalid email or password' });
     if (user.password !== hash) return res.status(401).json({ error: 'Invalid email or password' });
-    if (user.status === 'pending') return res.status(403).json({ error: 'Your account is pending approval by the principal.' });
-    if (user.status === 'rejected') return res.status(403).json({ error: 'Your account has been rejected.' });
+    if (user.status === 'pending') return res.status(403).json({ error: 'Your account is pending approval by the principal. Please contact the school admin.' });
+    if (user.status === 'rejected') return res.status(403).json({ error: 'Your account has been rejected. Please contact the school admin.' });
     res.setHeader('Set-Cookie', setCookie('user_token', user.id));
     return res.json({ success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, subject: user.subject, status: user.status } });
   } catch (e) {
@@ -401,14 +405,14 @@ apiRoutes['DELETE /api/gallery/{id}'] = async (req, res, params) => {
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
 };
 
-// --- UPLOAD (stores base64 data URL in Vercel serverless) ---
+// --- UPLOAD (stores base64 data URL on Vercel, no filesystem) ---
 apiRoutes['POST /api/upload'] = async (req, res) => {
   try {
     const cookies = parseCookies(req.headers.cookie);
     if (!(await checkAdminOrPrincipal(cookies))) return res.status(401).json({ error: 'Unauthorized' });
     const { imageData, folder } = req.body || {};
     if (!imageData) return res.status(400).json({ error: 'No image data provided' });
-    // On Vercel, return the base64 data URL directly (no filesystem)
+    // On Vercel serverless, filesystem is read-only; return the base64 data URL directly
     return res.status(201).json({ success: true, url: imageData });
   } catch (e) {
     console.error('Upload error:', e);
@@ -513,12 +517,22 @@ apiRoutes['POST /api/settings'] = async (req, res) => {
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
 };
 
-// ── Vercel Serverless Handler ─────────────────────────────────────
-export default async function handler(req, res) {
+// ── Vercel Serverless Handler (CommonJS export) ───────────────────
+module.exports = async function handler(req, res) {
   // Build the path from the catch-all segments
   const pathSegments = req.query.path || [];
   const urlPath = '/' + pathSegments.join('/');
   const method = req.method;
+
+  // Enable CORS for all responses
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Cookie');
+
+  // Handle preflight requests
+  if (method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
   const matched = matchRoute(method, urlPath);
   if (matched) {
@@ -531,4 +545,4 @@ export default async function handler(req, res) {
   }
 
   res.status(404).json({ error: 'API endpoint not found' });
-}
+};

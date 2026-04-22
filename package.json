@@ -5,14 +5,16 @@
   "private": true,
   "scripts": {
     "start": "NODE_OPTIONS=--max-old-space-size=768 node light-server.mjs",
+    "vercel-build": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:generate": "npx prisma generate",
     "db:studio": "npx prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^6.0.0"
-  },
-  "devDependencies": {
+    "@prisma/client": "^6.0.0",
     "prisma": "^6.0.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
