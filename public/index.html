@@ -1103,33 +1103,30 @@
         }
 
         .gallery-card {
-            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
             border-radius: 14px;
-            aspect-ratio: 4/3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #a7f3d0;
-            gap: 8px;
-            transition: all 0.25s;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            text-decoration: none;
-            color: #065f46;
+            background: #f3f4f6;
         }
 
         .gallery-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(6, 95, 70, 0.12);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            border-color: transparent;
         }
 
-        .gallery-card .gallery-icon {
-            font-size: 36px;
+        .gallery-card img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
         }
 
-        .gallery-card .gallery-label {
-            font-size: 13px;
-            font-weight: 600;
+        .gallery-card:hover img {
+            transform: scale(1.08);
         }
 
         /* ========== CONTACT SECTION ========== */
@@ -2440,10 +2437,9 @@
 
                 var html = '<div class="gallery-grid">';
                 images.forEach(function(img) {
-                    var label = img.title || img.caption || img.category || 'School Photo';
-                    html += '<div class="gallery-card" title="' + escapeHtml(label) + '">';
-                    html += '  <div class="gallery-icon">&#128247;</div>';
-                    html += '  <div class="gallery-label">' + escapeHtml(label) + '</div>';
+                    var src = img.imageUrl || img.image_url || '';
+                    html += '<div class="gallery-card">';
+                    html += '  <img src="' + escapeHtml(src) + '" alt="School Photo" loading="lazy">';
                     html += '</div>';
                 });
                 html += '</div>';
