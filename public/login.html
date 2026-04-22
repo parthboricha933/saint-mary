@@ -102,6 +102,11 @@
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 50px;
         }
 
         .submit-btn:hover {
@@ -119,10 +124,39 @@
             box-shadow: none;
         }
 
+        .submit-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        .submit-btn.loading .spinner { display: inline-block; }
+        .submit-btn.loading .btn-text { display: none; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .error-box {
             background: #fef2f2;
             border: 1px solid #fecaca;
             color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 18px;
+            display: none;
+            text-align: left;
+        }
+
+        .success-box {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
             padding: 12px 16px;
             border-radius: 8px;
             font-size: 14px;
@@ -187,10 +221,11 @@
 <body>
 
     <div class="login-card">
-        <img src="uploads/school-logo.png" alt="Saint Mary School Badge" class="school-badge">
+        <img src="uploads/school-logo.png" alt="Saint Mary School Badge" class="school-badge"
+             onerror="this.style.display='none'">
 
         <h1>Teacher &amp; Principal Login</h1>
-        <p class="subtitle">Saint Mary School</p>
+        <p class="subtitle">Saint Mary School, Rajula</p>
 
         <form id="loginForm" novalidate>
             <div class="form-group">
@@ -203,9 +238,13 @@
                 <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text">Sign In</span>
+                <span class="spinner"></span>
+            </button>
 
             <div class="error-box" id="errorBox"></div>
+            <div class="success-box" id="successBox"></div>
         </form>
 
         <div class="footer-links">
@@ -222,25 +261,62 @@
             var passwordInput = document.getElementById('password');
             var submitBtn = document.getElementById('submitBtn');
             var errorBox = document.getElementById('errorBox');
+            var successBox = document.getElementById('successBox');
 
             function showError(message) {
+                successBox.style.display = 'none';
                 errorBox.textContent = message;
                 errorBox.style.display = 'block';
             }
 
-            function hideError() {
-                errorBox.textContent = '';
+            function showSuccess(message) {
                 errorBox.style.display = 'none';
+                successBox.textContent = message;
+                successBox.style.display = 'block';
+            }
+
+            function hideMessages() {
+                errorBox.style.display = 'none';
+                errorBox.textContent = '';
+                successBox.style.display = 'none';
+                successBox.textContent = '';
+            }
+
+            function setLoading(loading) {
+                submitBtn.disabled = loading;
+                if (loading) {
+                    submitBtn.classList.add('loading');
+                } else {
+                    submitBtn.classList.remove('loading');
+                }
+            }
+
+            // Timeout wrapper for fetch
+            function fetchWithTimeout(url, options, timeout) {
+                return new Promise(function (resolve, reject) {
+                    var timer = setTimeout(function () {
+                        reject(new Error('Request timed out. Please check your connection and try again.'));
+                    }, timeout);
+
+                    fetch(url, options)
+                        .then(function (response) {
+                            clearTimeout(timer);
+                            resolve(response);
+                        })
+                        .catch(function (err) {
+                            clearTimeout(timer);
+                            reject(err);
+                        });
+                });
             }
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                hideError();
+                hideMessages();
 
                 var email = emailInput.value.trim();
                 var password = passwordInput.value;
 
-                // Basic client-side validation
                 if (!email) {
                     showError('Please enter your email address.');
                     emailInput.focus();
@@ -253,43 +329,48 @@
                     return;
                 }
 
-                // Disable button and show loading state
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Signing in...';
+                setLoading(true);
 
-                // Send login request
-                fetch('/api/auth/user-login', {
+                fetchWithTimeout('/api/auth/user-login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, password: password })
-                })
+                }, 15000)
                 .then(function (response) {
-                    if (response.ok || response.redirected) {
-                        // Success — redirect to dashboard
-                        window.location.href = '/dashboard';
+                    if (response.ok) {
+                        showSuccess('Login successful! Redirecting to dashboard...');
+                        // Small delay to show success message
+                        setTimeout(function () {
+                            window.location.href = '/dashboard';
+                        }, 500);
                     } else {
-                        return response.json().then(function (data) {
-                            throw new Error(data.message || data.error || 'Login failed. Please check your credentials.');
-                        }).catch(function (err) {
-                            if (err.message && err.message !== 'Login failed. Please check your credentials.') {
-                                throw err;
+                        // Try to parse error from response
+                        return response.text().then(function (text) {
+                            try {
+                                var data = JSON.parse(text);
+                                throw new Error(data.error || data.message || 'Login failed');
+                            } catch (parseErr) {
+                                if (parseErr.message && parseErr.message !== 'Login failed') {
+                                    throw parseErr;
+                                }
+                                throw new Error('Invalid email or password. Please try again.');
                             }
-                            throw new Error('Login failed. Please check your credentials.');
                         });
                     }
                 })
                 .catch(function (err) {
-                    showError(err.message || 'An unexpected error occurred. Please try again.');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Sign In';
+                    var msg = err.message || 'An unexpected error occurred. Please try again.';
+                    if (msg.indexOf('Failed to fetch') !== -1 || msg.indexOf('NetworkError') !== -1) {
+                        msg = 'Network error. Please check your connection and try again.';
+                    }
+                    showError(msg);
+                    setLoading(false);
                 });
             });
 
-            // Hide error when user starts typing
-            emailInput.addEventListener('input', hideError);
-            passwordInput.addEventListener('input', hideError);
+            // Hide messages when user starts typing
+            emailInput.addEventListener('input', hideMessages);
+            passwordInput.addEventListener('input', hideMessages);
         })();
     </script>
 

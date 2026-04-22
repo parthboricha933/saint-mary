@@ -1133,16 +1133,25 @@
       // ── Auth Check ─────────────────────────────────────────────
       function checkAuth() {
         showScreen('loading');
+
+        var authTimer = setTimeout(function () {
+          console.warn('Auth check timed out');
+          showScreen('notauth');
+        }, 10000);
+
         fetch('/api/auth/me', {
           method: 'GET',
           credentials: 'include',
           headers: { 'Accept': 'application/json' }
         })
         .then(function (res) {
-          if (!res.ok) throw new Error('Not authenticated');
+          clearTimeout(authTimer);
+          if (!res.ok) throw new Error('Not authenticated (' + res.status + ')');
           return res.json();
         })
         .then(function (user) {
+          if (!user || !user.success) throw new Error('Invalid auth response');
+
           currentUser = user;
 
           // Admin redirect
@@ -1152,10 +1161,16 @@
           }
 
           // Setup dashboard
-          initDashboard();
+          try {
+            initDashboard();
+          } catch (err) {
+            console.error('initDashboard error:', err);
+          }
           showScreen('dashboard');
         })
-        .catch(function () {
+        .catch(function (err) {
+          clearTimeout(authTimer);
+          console.warn('Auth check failed:', err.message);
           showScreen('notauth');
         });
       }
@@ -1461,11 +1476,20 @@
         var refreshBtn = document.getElementById('refreshEvents');
         refreshBtn.classList.add('spinning');
 
+        var timer = setTimeout(function () {
+          eventsContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Request timed out. Please refresh.</p>' +
+            '</div>';
+        }, 15000);
+
         fetch('/api/events', {
           credentials: 'include',
           headers: { 'Accept': 'application/json' }
         })
         .then(function (res) {
+          clearTimeout(timer);
           if (!res.ok) throw new Error('Failed to load events');
           return res.json();
         })
@@ -1480,6 +1504,7 @@
             '</div>';
         })
         .finally(function () {
+          clearTimeout(timer);
           refreshBtn.classList.remove('spinning');
         });
       }
@@ -1531,11 +1556,20 @@
         var refreshBtn = document.getElementById('refreshNotifications');
         refreshBtn.classList.add('spinning');
 
+        var timer = setTimeout(function () {
+          notificationsContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Request timed out. Please refresh.</p>' +
+            '</div>';
+        }, 15000);
+
         fetch('/api/notifications', {
           credentials: 'include',
           headers: { 'Accept': 'application/json' }
         })
         .then(function (res) {
+          clearTimeout(timer);
           if (!res.ok) throw new Error('Failed to load notifications');
           return res.json();
         })
@@ -1552,6 +1586,7 @@
             '</div>';
         })
         .finally(function () {
+          clearTimeout(timer);
           refreshBtn.classList.remove('spinning');
         });
       }
@@ -1604,11 +1639,20 @@
         var refreshBtn = document.getElementById('refreshSyllabus');
         refreshBtn.classList.add('spinning');
 
+        var timer = setTimeout(function () {
+          syllabusContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Request timed out. Please refresh.</p>' +
+            '</div>';
+        }, 15000);
+
         fetch('/api/syllabus', {
           credentials: 'include',
           headers: { 'Accept': 'application/json' }
         })
         .then(function (res) {
+          clearTimeout(timer);
           if (!res.ok) throw new Error('Failed to load syllabus');
           return res.json();
         })
@@ -1623,6 +1667,7 @@
             '</div>';
         })
         .finally(function () {
+          clearTimeout(timer);
           refreshBtn.classList.remove('spinning');
         });
       }
@@ -1698,11 +1743,20 @@
         var refreshBtn = document.getElementById('refreshTeachers');
         refreshBtn.classList.add('spinning');
 
+        var timer = setTimeout(function () {
+          teachersContainer.innerHTML =
+            '<div class="empty-state">' +
+            '  <div class="empty-icon">&#9888;&#65039;</div>' +
+            '  <p>Request timed out. Please refresh.</p>' +
+            '</div>';
+        }, 15000);
+
         fetch('/api/users', {
           credentials: 'include',
           headers: { 'Accept': 'application/json' }
         })
         .then(function (res) {
+          clearTimeout(timer);
           if (!res.ok) throw new Error('Failed to load users');
           return res.json();
         })
@@ -1717,6 +1771,7 @@
             '</div>';
         })
         .finally(function () {
+          clearTimeout(timer);
           refreshBtn.classList.remove('spinning');
         });
       }
