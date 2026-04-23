@@ -1927,7 +1927,10 @@
         var container = document.getElementById('messagesContent');
         container.innerHTML = '<div class="empty-state">&#128260; Loading messages...</div>';
         fetch('/api/contact-messages', { credentials: 'include' })
-            .then(function(r) { return r.json(); })
+            .then(function(r) {
+                if (!r.ok) throw new Error('Failed to load (status ' + r.status + ')');
+                return r.json();
+            })
             .then(function(data) {
                 var messages = data.messages || data.data || [];
                 if (messages.length === 0) {
@@ -1964,7 +1967,7 @@
                 container.innerHTML = html;
             })
             .catch(function(err) {
-                container.innerHTML = '<div class="empty-state">&#9888;&#65039; Failed to load messages.</div>';
+                container.innerHTML = '<div class="empty-state">&#9888;&#65039; Failed to load messages: ' + escapeHtmlAdmin(err.message) + '</div>';
             });
     }
 
@@ -2004,7 +2007,10 @@
         var container = document.getElementById('inquiriesContent');
         container.innerHTML = '<div class="empty-state">&#128260; Loading inquiries...</div>';
         fetch('/api/admission-inquiries', { credentials: 'include' })
-            .then(function(r) { return r.json(); })
+            .then(function(r) {
+                if (!r.ok) throw new Error('Failed to load (status ' + r.status + ')');
+                return r.json();
+            })
             .then(function(data) {
                 var inquiries = data.inquiries || data.data || [];
                 if (inquiries.length === 0) {
@@ -2054,7 +2060,7 @@
                 container.innerHTML = html;
             })
             .catch(function(err) {
-                container.innerHTML = '<div class="empty-state">&#9888;&#65039; Failed to load inquiries.</div>';
+                container.innerHTML = '<div class="empty-state">&#9888;&#65039; Failed to load inquiries: ' + escapeHtmlAdmin(err.message) + '</div>';
             });
     }
 

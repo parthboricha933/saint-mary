@@ -181,6 +181,42 @@ async function main() {
   }
   console.log('Created', galleryImages.length, 'gallery images');
 
+  // --- CONTACT MESSAGES ---
+  const contactMessages = [
+    { id: 'msg-001', name: 'Rakesh Shah', email: 'rakesh.shah@gmail.com', phone: '9898123456', subject: 'Fee Structure Query', message: 'I would like to know the complete fee structure for Class 5 for the academic year 2025-26. Could you please share the breakdown including transport fees?', isRead: false },
+    { id: 'msg-002', name: 'Sunita Patel', email: 'sunita.p@yahoo.com', phone: '9876512345', subject: 'Admission Enquiry', message: 'We are planning to shift to Rajula. I want to admit my son in Class 3. What is the admission process and when can we visit the school for a campus tour?', isRead: false },
+    { id: 'msg-003', name: 'Amit Joshi', email: 'amit.joshi@outlook.com', phone: '9427312345', subject: 'Bus Facility', message: 'Does the school provide bus transport from Bhavnagar road area? What are the pick-up and drop timings? Please share the transport route details.', isRead: true },
+    { id: 'msg-004', name: 'Kavita Desai', email: 'kavita.desai@gmail.com', phone: '9685712345', subject: 'Sports Activities', message: 'My daughter is very interested in sports. What indoor and outdoor sports facilities does the school offer? Are there any special coaching classes after school hours?', isRead: false },
+    { id: 'msg-005', name: 'Vikram Singh', email: 'vikram.singh@gmail.com', phone: '9925812345', subject: 'Library Facility', message: 'I wanted to know about the school library. Does the school have a well-stocked library? What are the library timings and can students borrow books home?', isRead: true },
+  ];
+
+  for (const m of contactMessages) {
+    await prisma.contactMessage.upsert({
+      where: { id: m.id },
+      update: {},
+      create: m
+    });
+  }
+  console.log('Created', contactMessages.length, 'contact messages');
+
+  // --- ADMISSION INQUIRIES ---
+  const admissionInquiries = [
+    { id: 'inq-001', studentName: 'Aarav Patel', parentName: 'Rajesh Patel', contactNumber: '9898123401', email: 'rajesh.patel@gmail.com', classApplied: 'Class 5', message: 'My son is currently studying in Class 4 at Delhi Public School, Rajula. We would like to transfer him to your school for the next academic year. He is good in Mathematics and Science.', status: 'pending' },
+    { id: 'inq-002', studentName: 'Priya Sharma', parentName: 'Meena Sharma', contactNumber: '9876513402', email: 'meena.sharma@yahoo.com', classApplied: 'Class 3', message: 'We are new to Rajula and looking for a good school for our daughter. She has studied in an English medium school till now.', status: 'approved', adminReply: 'Welcome! Please visit the school office between 9 AM and 2 PM with the previous school TC and mark sheets. We will guide you through the admission process.' },
+    { id: 'inq-003', studentName: 'Rohan Desai', parentName: 'Dinesh Desai', contactNumber: '9427313403', classApplied: 'Class 7', message: 'My son is studying in Class 6 in a Gujarati medium school. We want him to join English medium from Class 7. Will there be any special support for the language transition?', status: 'pending' },
+    { id: 'inq-004', studentName: 'Ananya Joshi', parentName: 'Sunil Joshi', contactNumber: '9685713404', email: 'sunil.joshi@outlook.com', classApplied: 'Class 1', message: 'My daughter will be 6 years old in June. Is she eligible for Class 1 admission? What documents do we need to bring?', status: 'pending' },
+    { id: 'inq-005', studentName: 'Karan Singh', parentName: 'Manoj Singh', contactNumber: '9925813405', classApplied: 'Class 8', message: 'We are relocating from Ahmedabad. My son is currently in Class 7. We need admission in Class 8 urgently. Please let us know the process.', status: 'rejected', adminReply: 'Thank you for your interest. Unfortunately, admissions for Class 8 are currently full for this academic year. We suggest you try again next year.' },
+  ];
+
+  for (const inq of admissionInquiries) {
+    await prisma.admissionInquiry.upsert({
+      where: { id: inq.id },
+      update: {},
+      create: inq
+    });
+  }
+  console.log('Created', admissionInquiries.length, 'admission inquiries');
+
   // --- SITE SETTINGS ---
   const settings = {
     schoolName: 'Saint Mary School',
