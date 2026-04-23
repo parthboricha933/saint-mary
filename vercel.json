@@ -3,6 +3,7 @@
     { "source": "/api/(.*)", "destination": "/api/server" },
     { "source": "/login", "destination": "/login.html" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" }
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/office", "destination": "/office.html" }
   ]
 }

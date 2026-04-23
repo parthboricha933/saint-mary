@@ -116,11 +116,22 @@ async function checkAdminOrPrincipal(req) {
   return null;
 }
 
+// Check if user is admin, principal, or receptionist — for contact/inquiry access
+async function checkOfficeAuth(req) {
+  const isAdmin = await checkAdminAuth(req);
+  if (isAdmin) return { role: 'admin' };
+  const user = await checkUserAuth(req);
+  if (user && user.role === 'principal' && user.status === 'approved') return user;
+  if (user && user.role === 'receptionist' && user.status === 'approved') return user;
+  return null;
+}
+
 const pageMap = {
   '/': 'index.html',
   '/login': 'login.html',
   '/admin': 'admin.html',
   '/dashboard': 'dashboard.html',
+  '/office': 'office.html',
 };
 
 function setPageCookies(res, name, value) {
@@ -207,7 +218,7 @@ apiRoutes['POST /api/auth/register'] = async (req, res) => {
     const body = JSON.parse(await readBody(req));
     const { name, email, password, role, phone, subject } = body;
     if (!name || !email || !password || !role) return json(res, { error: 'Missing required fields' }, 400);
-    if (!['teacher', 'principal'].includes(role)) return json(res, { error: 'Invalid role' }, 400);
+    if (!['teacher', 'principal', 'receptionist'].includes(role)) return json(res, { error: 'Invalid role' }, 400);
     const p = await getPrisma();
     const existing = await p.user.findUnique({ where: { email } });
     if (existing) return json(res, { error: 'Email already exists' }, 409);
@@ -580,8 +591,7 @@ apiRoutes['DELETE /api/gallery/{id}'] = async (req, res, params) => {
 // --- ADMISSION INQUIRIES ---
 apiRoutes['GET /api/admission-inquiries'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    if (!(await checkOfficeAuth(req))) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     const inquiries = await p.admissionInquiry.findMany({ orderBy: { createdAt: 'desc' } });
     json(res, { success: true, inquiries });
@@ -607,8 +617,7 @@ apiRoutes['POST /api/admission-inquiries'] = async (req, res) => {
 
 apiRoutes['GET /api/admission-inquiries/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    if (!(await checkOfficeAuth(req))) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     const inquiry = await p.admissionInquiry.findUnique({ where: { id: params.id } });
     if (!inquiry) return json(res, { error: 'Inquiry not found' }, 404);
@@ -620,8 +629,7 @@ apiRoutes['GET /api/admission-inquiries/{id}'] = async (req, res, params) => {
 
 apiRoutes['PUT /api/admission-inquiries/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    if (!(await checkOfficeAuth(req))) return json(res, { error: 'Unauthorized' }, 401);
     const body = JSON.parse(await readBody(req));
     const p = await getPrisma();
     const inquiry = await p.admissionInquiry.update({ where: { id: params.id }, data: body });
@@ -633,8 +641,7 @@ apiRoutes['PUT /api/admission-inquiries/{id}'] = async (req, res, params) => {
 
 apiRoutes['DELETE /api/admission-inquiries/{id}'] = async (req, res, params) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    if (!(await checkOfficeAuth(req))) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     await p.admissionInquiry.delete({ where: { id: params.id } });
     json(res, { success: true });
@@ -646,8 +653,7 @@ apiRoutes['DELETE /api/admission-inquiries/{id}'] = async (req, res, params) => 
 // --- CONTACT MESSAGES ---
 apiRoutes['GET /api/contact-messages'] = async (req, res) => {
   try {
-    const isAdmin = await checkAdminAuth(req);
-    if (!isAdmin) return json(res, { error: 'Unauthorized' }, 401);
+    if (!(await checkOfficeAuth(req))) return json(res, { error: 'Unauthorized' }, 401);
     const p = await getPrisma();
     const messages = await p.contactMessage.findMany({ orderBy: { createdAt: 'desc' } });
     json(res, { success: true, messages });

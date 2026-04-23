@@ -63,6 +63,20 @@ async function main() {
 
   console.log('Created users:', principal.name, teacher1.name, teacher2.name, teacher3.name);
 
+  const receptionist = await prisma.user.upsert({
+    where: { email: 'receptionist@saintmaryschool.com' },
+    update: {},
+    create: {
+      name: 'Meera Patel',
+      email: 'receptionist@saintmaryschool.com',
+      password: '5145dba3b6bda2d610d2c5c435a1c2481eefd3146b6a7e004ad73f794386e031', // reception123
+      role: 'receptionist',
+      phone: '9876543214',
+      status: 'approved'
+    }
+  });
+  console.log('Created receptionist:', receptionist.name);
+
   // --- EVENTS ---
   const events = [
     { title: 'Annual Day Celebration', description: 'Join us for the grand Annual Day celebration featuring cultural programs, dance performances, and prize distribution ceremony. All parents are warmly invited.', date: '2025-02-15', time: '10:00 AM', venue: 'School Auditorium', isPublished: true },
@@ -192,6 +206,7 @@ async function main() {
   console.log('  Teacher 1: Email = teacher1@saintmaryschool.com, Password = admin123');
   console.log('  Teacher 2: Email = teacher2@saintmaryschool.com, Password = admin123');
   console.log('  Teacher 3: Email = teacher3@saintmaryschool.com, Password = admin123');
+  console.log('  Receptionist: Email = receptionist@saintmaryschool.com, Password = reception123');
 }
 
 main()

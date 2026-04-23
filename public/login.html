@@ -224,7 +224,7 @@
         <img src="/uploads/school-logo.png" alt="Saint Mary School Badge" class="school-badge"
              onerror="this.style.display='none'">
 
-        <h1>Teacher &amp; Principal Login</h1>
+        <h1>Staff Login</h1>
         <p class="subtitle">Saint Mary School, Rajula</p>
 
         <form id="loginForm" novalidate>
@@ -339,10 +339,16 @@
                 .then(function (response) {
                     setLoading(false);
                     if (response.ok) {
-                        showSuccess('Login successful! Redirecting to dashboard...');
-                        setTimeout(function () {
-                            window.location.href = '/dashboard';
-                        }, 500);
+                        return response.json().then(function (data) {
+                            showSuccess('Login successful! Redirecting...');
+                            setTimeout(function () {
+                                if (data.user && data.user.role === 'receptionist') {
+                                    window.location.href = '/office';
+                                } else {
+                                    window.location.href = '/dashboard';
+                                }
+                            }, 500);
+                        });
                     } else {
                         // Try to parse error from response
                         return response.text().then(function (text) {

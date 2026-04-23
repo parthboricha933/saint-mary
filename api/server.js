@@ -50,6 +50,16 @@ async function checkAdminOrPrincipal(cookies) {
   return null;
 }
 
+// Admin, Principal, or Receptionist — for contact-messages & admission-inquiries
+async function checkOfficeAuth(cookies) {
+  const isAdmin = await checkAdminAuth(cookies);
+  if (isAdmin) return { role: 'admin' };
+  const user = await checkUserAuth(cookies);
+  if (user && user.role === 'principal' && user.status === 'approved') return user;
+  if (user && user.role === 'receptionist' && user.status === 'approved') return user;
+  return null;
+}
+
 // ── Route matching ────────────────────────────────────────────────
 function matchRoute(method, urlPath) {
   const exactKey = method + ' ' + urlPath;
@@ -133,7 +143,7 @@ apiRoutes['POST /api/auth/register'] = async (req, res) => {
   try {
     const { name, email, password, role, phone, subject } = req.body || {};
     if (!name || !email || !password || !role) return res.status(400).json({ error: 'Missing required fields' });
-    if (!['teacher', 'principal'].includes(role)) return res.status(400).json({ error: 'Invalid role' });
+    if (!['teacher', 'principal', 'receptionist'].includes(role)) return res.status(400).json({ error: 'Invalid role' });
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) return res.status(409).json({ error: 'Email already exists' });
     if (role === 'principal') {
@@ -424,7 +434,7 @@ apiRoutes['POST /api/upload'] = async (req, res) => {
 apiRoutes['GET /api/admission-inquiries'] = async (req, res) => {
   try {
     const cookies = parseCookies(req.headers.cookie);
-    if (!(await checkAdminAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
     const inquiries = await prisma.admissionInquiry.findMany({ orderBy: { createdAt: 'desc' } });
     return res.json({ success: true, inquiries });
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
@@ -443,7 +453,7 @@ apiRoutes['POST /api/admission-inquiries'] = async (req, res) => {
 apiRoutes['GET /api/admission-inquiries/{id}'] = async (req, res, params) => {
   try {
     const cookies = parseCookies(req.headers.cookie);
-    if (!(await checkAdminAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
     const inquiry = await prisma.admissionInquiry.findUnique({ where: { id: params.id } });
     if (!inquiry) return res.status(404).json({ error: 'Inquiry not found' });
     return res.json({ success: true, inquiry });
@@ -453,7 +463,7 @@ apiRoutes['GET /api/admission-inquiries/{id}'] = async (req, res, params) => {
 apiRoutes['PUT /api/admission-inquiries/{id}'] = async (req, res, params) => {
   try {
     const cookies = parseCookies(req.headers.cookie);
-    if (!(await checkAdminAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
     const inquiry = await prisma.admissionInquiry.update({ where: { id: params.id }, data: req.body || {} });
     return res.json({ success: true, inquiry });
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
@@ -462,7 +472,7 @@ apiRoutes['PUT /api/admission-inquiries/{id}'] = async (req, res, params) => {
 apiRoutes['DELETE /api/admission-inquiries/{id}'] = async (req, res, params) => {
   try {
     const cookies = parseCookies(req.headers.cookie);
-    if (!(await checkAdminAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
     await prisma.admissionInquiry.delete({ where: { id: params.id } });
     return res.json({ success: true });
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
@@ -472,7 +482,7 @@ apiRoutes['DELETE /api/admission-inquiries/{id}'] = async (req, res, params) => 
 apiRoutes['GET /api/contact-messages'] = async (req, res) => {
   try {
     const cookies = parseCookies(req.headers.cookie);
-    if (!(await checkAdminAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
     const messages = await prisma.contactMessage.findMany({ orderBy: { createdAt: 'desc' } });
     return res.json({ success: true, messages });
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
@@ -489,6 +499,24 @@ apiRoutes['POST /api/contact'] = async (req, res) => {
 
 apiRoutes['POST /api/contact-messages'] = async (req, res) => {
   return apiRoutes['POST /api/contact'](req, res);
+};
+
+apiRoutes['PUT /api/contact-messages/{id}'] = async (req, res, params) => {
+  try {
+    const cookies = parseCookies(req.headers.cookie);
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    const msg = await prisma.contactMessage.update({ where: { id: params.id }, data: req.body || {} });
+    return res.json({ success: true, message: msg });
+  } catch (e) { return res.status(500).json({ error: 'Server error' }); }
+};
+
+apiRoutes['DELETE /api/contact-messages/{id}'] = async (req, res, params) => {
+  try {
+    const cookies = parseCookies(req.headers.cookie);
+    if (!(await checkOfficeAuth(cookies))) return res.status(401).json({ error: 'Unauthorized' });
+    await prisma.contactMessage.delete({ where: { id: params.id } });
+    return res.json({ success: true });
+  } catch (e) { return res.status(500).json({ error: 'Server error' }); }
 };
 
 // --- SETTINGS ---
