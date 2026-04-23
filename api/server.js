@@ -519,9 +519,8 @@ apiRoutes['POST /api/settings'] = async (req, res) => {
 
 // ── Vercel Serverless Handler (CommonJS export) ───────────────────
 module.exports = async function handler(req, res) {
-  // Build the path from the catch-all segments
-  const pathSegments = req.query.path || [];
-  const urlPath = '/' + pathSegments.join('/');
+  // Use req.url since req.query.path may be empty in some Vercel configs
+  const urlPath = (req.url || '').split('?')[0];
   const method = req.method;
 
   // Enable CORS for all responses

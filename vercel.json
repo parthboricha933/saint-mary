@@ -1,11 +1,8 @@
 {
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/server" },
     { "source": "/login", "destination": "/login.html" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/uploads/:path*", "destination": "/uploads/:path*" },
-    { "source": "/:path(.*\\.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|webp|pdf|woff|woff2|ttf|mp4|webm))", "destination": "/:path*" },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/dashboard", "destination": "/dashboard.html" }
   ]
 }
