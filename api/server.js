@@ -442,12 +442,26 @@ apiRoutes['GET /api/admission-inquiries'] = async (req, res) => {
 
 apiRoutes['POST /api/admission-inquiries'] = async (req, res) => {
   try {
-    const { studentName, parentName, contactNumber, classApplied } = req.body || {};
+    const body = req.body || {};
+    const { studentName, parentName, contactNumber, classApplied } = body;
     if (!studentName || !parentName || !contactNumber || !classApplied)
       return res.status(400).json({ error: 'Missing required fields' });
-    const inquiry = await prisma.admissionInquiry.create({ data: req.body || {} });
+    // Only pass known fields to Prisma to avoid unknown field errors
+    const inquiry = await prisma.admissionInquiry.create({
+      data: {
+        studentName: String(body.studentName),
+        parentName: String(body.parentName),
+        contactNumber: String(body.contactNumber),
+        email: body.email ? String(body.email) : null,
+        classApplied: String(body.classApplied),
+        message: body.message ? String(body.message) : null,
+      }
+    });
     return res.status(201).json({ success: true, inquiry });
-  } catch (e) { return res.status(500).json({ error: 'Server error' }); }
+  } catch (e) {
+    console.error('Admission inquiry create error:', e);
+    return res.status(500).json({ error: 'Server error' });
+  }
 };
 
 apiRoutes['GET /api/admission-inquiries/{id}'] = async (req, res, params) => {
@@ -490,11 +504,24 @@ apiRoutes['GET /api/contact-messages'] = async (req, res) => {
 
 apiRoutes['POST /api/contact'] = async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body || {};
+    const body = req.body || {};
+    const { name, email, subject, message } = body;
     if (!name || !email || !subject || !message) return res.status(400).json({ error: 'Missing required fields' });
-    await prisma.contactMessage.create({ data: req.body || {} });
+    // Only pass known fields to Prisma
+    await prisma.contactMessage.create({
+      data: {
+        name: String(body.name),
+        email: String(body.email),
+        phone: body.phone ? String(body.phone) : null,
+        subject: String(body.subject),
+        message: String(body.message),
+      }
+    });
     return res.status(201).json({ success: true, message: 'Your message has been sent successfully!' });
-  } catch (e) { return res.status(500).json({ error: 'Server error' }); }
+  } catch (e) {
+    console.error('Contact message create error:', e);
+    return res.status(500).json({ error: 'Server error' });
+  }
 };
 
 apiRoutes['POST /api/contact-messages'] = async (req, res) => {
@@ -545,11 +572,27 @@ apiRoutes['POST /api/settings'] = async (req, res) => {
   } catch (e) { return res.status(500).json({ error: 'Server error' }); }
 };
 
+// ── Body Parser for Vercel Serverless ───────────────────────────
+function parseBody(req) {
+  // Vercel auto-parses JSON bodies, but rewrites may deliver raw string/Buffer
+  if (req.body && typeof req.body === 'object') return req.body;
+  try {
+    if (typeof req.body === 'string') return JSON.parse(req.body);
+    if (Buffer.isBuffer(req.body)) return JSON.parse(req.body.toString('utf8'));
+  } catch (e) { /* ignore parse errors, fall through */ }
+  return {};
+}
+
 // ── Vercel Serverless Handler (CommonJS export) ───────────────────
 module.exports = async function handler(req, res) {
   // Use req.url since req.query.path may be empty in some Vercel configs
   const urlPath = (req.url || '').split('?')[0];
   const method = req.method;
+
+  // Ensure req.body is a parsed object for POST/PUT/PATCH
+  if (['POST', 'PUT', 'PATCH'].includes(method)) {
+    req.body = parseBody(req);
+  }
 
   // Enable CORS for all responses
   res.setHeader('Access-Control-Allow-Origin', '*');
